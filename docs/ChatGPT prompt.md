@@ -11,7 +11,9 @@
 9. When go to page 2, it still highlight page 1, and I can't go back to page 1.
 10. Update the code, when click a survey item, will go to the PublisherSurveyEditor page along with survey.id
 11. When PublisherSurveyEditor is open, call a http url go get survey detail, prefill the edit page with response body, example survey json is, ``paste survey detail json``
-12. There should be a "question" section and a "Add Question" button at the bottom of the form, when click the "Add Question" button, popup a window to select question type, there are 3 types of questions, 'TEXT', 'RADIO' and 'CHECKBOX', when click the "Add Question" button, will add a question item to the "question" section
+12. There should be a "question" section and a "Add Question" button at the bottom of the form, when click the "Add Question" button, popup a window to select question type, there are 3 types of questions, 'TEXT', 'RADIO' and 'CHECKBOX', when click the "Add Question" button, will add a question item to the "question" section.
+13. What is the id in this path? if it's survey id, that means the survey-editor page will load the survey with id, and allow user to edit the survey. But how about if user want to create a new survey? what value should pass to this id param?
+14. PublisherSurveyList and PublisherSurveyEditor hardcoded the server domain, how can I manage it well? So that I can switch local, development, and production easily?
 
 # Notes
 1. Please note it may generate different answer each time.

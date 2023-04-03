@@ -6,9 +6,10 @@ import { useHistory } from 'react-router-dom';
 const PublisherSurveyList: React.FC = () => {
   const [surveys, setSurveys] = useState([]);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
-
+  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+  
   const fetchSurveys = async (pageNumber = 0, pageSize = 10) => {
-    const response = await fetch(`http://localhost:8080/api/surveys/user/1?page=${pageNumber}&size=${pageSize}`);
+    const response = await fetch(`${serverDomain}/api/surveys/user/1?page=${pageNumber}&size=${pageSize}`);
     const data = await response.json();
     setSurveys(data.content);
     setPagination({ ...pagination, total: data.totalElements });

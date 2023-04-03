@@ -7,11 +7,11 @@ const PublisherSurveyEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [survey, setSurvey] = useState<any>(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
-
+  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
   useEffect(() => {
     const fetchSurvey = async () => {
-      const response = await fetch(`http://localhost:8080/api/surveys/${id}`);
+      const response = await fetch(`${serverDomain}/api/surveys/${id}`);
       const data = await response.json();
       setSurvey(data);
     };
