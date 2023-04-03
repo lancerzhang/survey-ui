@@ -30,10 +30,10 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
     <Menu theme="dark" mode="horizontal">
       {/* Publisher links */}
       <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
-      <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/1')}>Create Survey</Menu.Item>
+      <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>
       {/* Participant links */}
-      <Menu.Item key="3" onClick={() => handleClick('/participant/surveys')}>Take Survey</Menu.Item>
-      <Menu.Item key="4" onClick={() => handleClick('/participant/history')}>Survey History</Menu.Item>
+      <Menu.Item key="3" onClick={() => handleClick('/participant/survey-replies')}>Survey Replies</Menu.Item>
+      <Menu.Item key="4" onClick={() => handleClick('/participant/history')}>To be deleted - history</Menu.Item>
     </Menu>
   );
 

@@ -20,3 +20,6 @@
 4. GPT will use different implementation even in the same context, e.g. it will call another service B in service A, but if you ask it again, it will use repository directly... sometimes it will use Integer type, but sometimes it use int type...
 5. After modify it partially few times, you can ask it to verify the full db schema again.
 6. The end date of GPT training data is September 2021. You should use an old version of dependency, e.g. React 17.0.2
+
+# Tips
+* FE code is long, try to finish logic function first, and then optimize the look and feel.

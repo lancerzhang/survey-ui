@@ -15,8 +15,11 @@ const PublisherSurveyEditor: React.FC = () => {
       const data = await response.json();
       setSurvey(data);
     };
-
-    fetchSurvey();
+    if (id === 'new') {
+      // Initialize a new survey
+    } else {
+      fetchSurvey();
+    }
   }, [id]);
 
   const onFinish = (values: any) => {

@@ -1,4 +1,3 @@
-// Replace `PageName` with the respective page name
 import React from 'react';
 
 const ParticipantSurveyHistory: React.FC = () => {
