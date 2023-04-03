@@ -1,0 +1,31 @@
+.layout {
+    min-height: 100vh;
+  }
+  
+  .site-layout-content {
+    margin-top: 24px;
+    padding: 24px;
+    background: #fff;
+    min-height: 280px;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .menu {
+      display: none;
+    }
+  
+    .mobile-menu {
+      display: block;
+    }
+  }
+  
+  @media screen and (min-width: 768px) {
+    .menu {
+      display: block;
+    }
+  
+    .mobile-menu {
+      display: none;
+    }
+  }
+  
