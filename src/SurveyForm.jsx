@@ -1,8 +1,8 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 
-const SurveyForm: React.FC = () => {
-  const onFinish = (values: any) => {
+const SurveyForm = () => {
+  const onFinish = (values) => {
     console.log('Form values: ', values);
   };
 

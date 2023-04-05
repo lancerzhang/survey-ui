@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PublisherTemplates: React.FC = () => {
+const PublisherTemplates = () => {
   return (
     <div>
       <h1>PublisherTemplates</h1>

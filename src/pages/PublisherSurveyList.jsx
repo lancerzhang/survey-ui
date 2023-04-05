@@ -3,7 +3,7 @@ import { List, Avatar, Pagination } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 
-const PublisherSurveyList: React.FC = () => {
+const PublisherSurveyList = () => {
   const [surveys, setSurveys] = useState([]);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
@@ -19,13 +19,13 @@ const PublisherSurveyList: React.FC = () => {
     fetchSurveys(pagination.current - 1, pagination.pageSize);
   }, [pagination.current, pagination.pageSize]);
 
-  const handlePaginationChange = (page: number, pageSize?: number) => {
+  const handlePaginationChange = (page, pageSize) => {
     setPagination({ ...pagination, current: page, pageSize: pageSize || 10 });
   };
 
   const history = useHistory();
 
-  const handleItemClick = (surveyId: number) => {
+  const handleItemClick = (surveyId) => {
     history.push(`/publisher/survey-editor/${surveyId}`);
   };
 
@@ -35,7 +35,7 @@ const PublisherSurveyList: React.FC = () => {
       <List
         itemLayout="vertical"
         dataSource={surveys}
-        renderItem={(survey: any) => (
+        renderItem={(survey) => (
           <List.Item
           key={survey.id}
           onClick={() => handleItemClick(survey.id)}

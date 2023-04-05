@@ -1,13 +1,8 @@
 import React from 'react';
 import { Modal, Button } from 'antd';
 
-interface AddQuestionModalProps {
-  visible: boolean;
-  onCancel: () => void;
-  onAddQuestion: (questionType: string) => void;
-}
 
-const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
+const AddQuestionModal = ({
   visible,
   onCancel,
   onAddQuestion,

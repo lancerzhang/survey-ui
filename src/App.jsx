@@ -8,7 +8,7 @@ import PublisherSurveyResults from './pages/PublisherSurveyResults';
 import PublisherReportDownload from './pages/PublisherReportDownload';
 import ParticipantSurveyReplyList from './pages/ParticipantSurveyReplyList';
 
-const App: React.FC = () => {
+const App = () => {
     return (
         <Router>
             <LayoutWrapper>

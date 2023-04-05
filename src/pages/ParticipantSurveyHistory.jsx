@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ParticipantSurveyHistory: React.FC = () => {
+const ParticipantSurveyHistory = () => {
   return (
     <div>
       <h1>ParticipantSurveyHistory</h1>
