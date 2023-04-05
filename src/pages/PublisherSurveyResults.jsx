@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PublisherSurveyResults: React.FC = () => {
+const PublisherSurveyResults = () => {
   return (
     <div>
       <h1>PublisherSurveyResults</h1>

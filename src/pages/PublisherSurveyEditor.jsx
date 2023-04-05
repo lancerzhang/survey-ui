@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Form, Input, Switch, Button, Divider } from 'antd';
 import AddQuestionModal from '../components/AddQuestionModal';
 
-const PublisherSurveyEditor: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [survey, setSurvey] = useState<any>(null);
+const PublisherSurveyEditor = () => {
+  const { id } = useParams();
+  const [survey, setSurvey] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
@@ -22,7 +22,7 @@ const PublisherSurveyEditor: React.FC = () => {
     }
   }, [id]);
 
-  const onFinish = (values: any) => {
+  const onFinish = (values) => {
     console.log('Form values:', values);
   };
 
@@ -30,7 +30,7 @@ const PublisherSurveyEditor: React.FC = () => {
     setShowAddQuestionModal(true);
   };
 
-  const handleAddQuestion = (questionType: string) => {
+  const handleAddQuestion = (questionType) => {
     console.log('Adding question of type:', questionType);
     setShowAddQuestionModal(false);
   };

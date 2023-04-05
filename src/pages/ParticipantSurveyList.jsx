@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ParticipantSurveyList: React.FC = () => {
+const ParticipantSurveyList = () => {
   return (
     <div>
       <h1>ParticipantSurveyList</h1>

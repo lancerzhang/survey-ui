@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PublisherReportDownload: React.FC = () => {
+const PublisherReportDownload = () => {
   return (
     <div>
       <h1>PublisherReportDownload</h1>

@@ -7,15 +7,12 @@ import useMediaQuery from '../hooks/useMediaQuery';
 
 const { Header, Content, Footer } = Layout;
 
-interface LayoutWrapperProps {
-  children: React.ReactNode;
-}
 
-const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
+const LayoutWrapper = ({ children }) => {
   const history = useHistory();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
-  const handleClick = (path: string) => {
+  const handleClick = (path) => {
     history.push(path);
   };
 
