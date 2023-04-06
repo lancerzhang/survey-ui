@@ -14,10 +14,12 @@
 12. There should be a "question" section and a "Add Question" button at the bottom of the form, when click the "Add Question" button, popup a window to select question type, there are 3 types of questions, 'TEXT', 'RADIO' and 'CHECKBOX', when click the "Add Question" button, will add a question item to the "question" section.
 13. What is the id in this path? if it's survey id, that means the survey-editor page will load the survey with id, and allow user to edit the survey. But how about if user want to create a new survey? what value should pass to this id param?
 14. PublisherSurveyList and PublisherSurveyEditor hardcoded the server domain, how can I manage it well? So that I can switch local, development, and production easily?
+15.  Write a Survey editor page, such as input boxes, radio boxes, check boxes, etc. Then, connect these UI elements to the Survey editor's state object and implement methods to add, remove, and update them.
+16. There should be a label for each question, we should allow user to input question and add/remove option.
 
 # Notes
 1. Please note it may generate different answer each time.
-2. You may try to limit the response words, otherwise the result may be break. You can achieve this by reducing the requirement in one question. If it exceed words limit, type "give me rest of the code".
+2. You may try to limit the response words, otherwise the result may be break. You can achieve this by reducing the requirement in one question. If it exceed words limit, type "give me rest of the code" or "go on". (Do NOT type "continue", it doesn't work.)
 3. The result may be not correct, please verify the result. It can help you to debug, just paste the error to it.
 4. GPT will use different implementation even in the same context, e.g. it will call another service B in service A, but if you ask it again, it will use repository directly... sometimes it will use Integer type, but sometimes it use int type...
 5. After modify it partially few times, you can ask it to verify the full db schema again.

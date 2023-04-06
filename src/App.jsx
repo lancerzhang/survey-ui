@@ -4,6 +4,7 @@ import LayoutWrapper from './components/LayoutWrapper';
 import PublisherSurveyList from './pages/PublisherSurveyList';
 import PublisherTemplates from './pages/PublisherTemplates';
 import PublisherSurveyEditor from './pages/PublisherSurveyEditor';
+import SurveyEditor from './pages/SurveyEditor';
 import PublisherSurveyResults from './pages/PublisherSurveyResults';
 import PublisherReportDownload from './pages/PublisherReportDownload';
 import ParticipantSurveyReplyList from './pages/ParticipantSurveyReplyList';
@@ -14,6 +15,7 @@ const App = () => {
             <LayoutWrapper>
                 <Switch>
                     <Route path="/publisher/surveys" component={PublisherSurveyList} />
+                    <Route path="/SurveyEditor" component={SurveyEditor} />
                     <Route path="/publisher/survey-editor/:id" component={PublisherSurveyEditor} />
                     <Route path="/publisher/templates" component={PublisherTemplates} />
                     <Route path="/publisher/survey-results/:id" component={PublisherSurveyResults} />
