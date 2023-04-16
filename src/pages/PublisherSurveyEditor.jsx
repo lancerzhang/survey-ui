@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Form, Input, Switch, Button, Divider } from 'antd';
-import AddQuestionModal from '../components/AddQuestionModal';
+import QuestionEditor from './QuestionEditor';
 
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
-  const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+
+  const handleQuestionsChange = (updatedQuestions) => {
+    setQuestions(updatedQuestions);
+  };
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -17,26 +21,15 @@ const PublisherSurveyEditor = () => {
     };
     if (id === 'new') {
       // Initialize a new survey
+      setSurvey({});
     } else {
       fetchSurvey();
     }
   }, [id]);
 
   const onFinish = (values) => {
+    values.questions=questions;
     console.log('Form values:', values);
-  };
-
-  const handleAddQuestionClick = () => {
-    setShowAddQuestionModal(true);
-  };
-
-  const handleAddQuestion = (questionType) => {
-    console.log('Adding question of type:', questionType);
-    setShowAddQuestionModal(false);
-  };
-
-  const handleAddQuestionCancel = () => {
-    setShowAddQuestionModal(false);
   };
 
   return (
@@ -62,13 +55,7 @@ const PublisherSurveyEditor = () => {
             <Switch />
           </Form.Item>
           <Divider />
-          <h2>Questions</h2>
-          {/* Render questions here */}
-          <Form.Item wrapperCol={{ offset: 4 }}>
-            <Button type="primary" onClick={handleAddQuestionClick}>
-              Add Question
-            </Button>
-          </Form.Item>
+          <QuestionEditor questions={questions} onQuestionsChange={handleQuestionsChange} />
           <Divider />
           {/* Add other form items for the remaining fields */}
           <Form.Item wrapperCol={{ offset: 4 }}>
@@ -76,15 +63,7 @@ const PublisherSurveyEditor = () => {
               Submit
             </Button>
           </Form.Item>
-          <div>
-            <AddQuestionModal
-              visible={showAddQuestionModal}
-              onCancel={handleAddQuestionCancel}
-              onAddQuestion={handleAddQuestion}
-            />
-          </div>
         </Form>
-
       )}
     </div>
   );

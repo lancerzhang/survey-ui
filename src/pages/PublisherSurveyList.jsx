@@ -42,7 +42,7 @@ const PublisherSurveyList = () => {
           >
             <List.Item.Meta
               avatar={<Avatar icon={<UserOutlined />} />}
-              title={survey.user.username}
+              title={survey.userId}
               description={survey.title}
             />
             {survey.description}
