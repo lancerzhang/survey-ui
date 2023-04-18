@@ -16,6 +16,11 @@
 14. PublisherSurveyList and PublisherSurveyEditor hardcoded the server domain, how can I manage it well? So that I can switch local, development, and production easily?
 15.  Write a Survey editor page, such as input boxes, radio boxes, check boxes, etc. Then, connect these UI elements to the Survey editor's state object and implement methods to add, remove, and update them.
 16. There should be a label for each question, we should allow user to input question and add/remove option.
+17. Update the placeholder from "Question label" to "Type your question here.". Add a question to the left of the label, make sure Add option button and Remove button remains on the same line after that. 
+18. Add some vertical space between two Space element
+19. Add some vertical space above Add Input, Add Radio, Add CheckBox buttons. Enable the options, When addelement, by default options should be input box and allow user to input, add placeholder so that it make sense to user, when user update option input box, update the state in the component
+20. How can another page include this SurveyEditor.jsx as component? The parent page can pass the elements to this SurveyEditor, when SurveyEditor change, parent page will get the updates.
+21. Put options under question , and put answer under question for input type
 
 # Notes
 1. Please note it may generate different answer each time.
