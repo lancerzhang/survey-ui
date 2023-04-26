@@ -14,6 +14,7 @@ const App = () => {
         <Router>
             <LayoutWrapper>
                 <Switch>
+                    <Route exact path="/" component={PublisherSurveyList} />
                     <Route path="/publisher/surveys" component={PublisherSurveyList} />
                     <Route path="/QuestionEditor" component={QuestionEditor} />
                     <Route path="/publisher/survey-editor/:id" component={PublisherSurveyEditor} />

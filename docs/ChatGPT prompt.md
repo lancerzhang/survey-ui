@@ -22,6 +22,7 @@
 20. How can another page include this SurveyEditor.jsx as component? The parent page can pass the elements to this SurveyEditor, when SurveyEditor change, parent page will get the updates.
 21. Put options under question , and put answer under question for input type
 22. here is my PublisherSurveyEditor.jsx, pls add title and description placeholder, when submit button is click validate if all fields are inputted. if no error, when there is no path param "id",  send a POST request to `${serverDomain}/api/surveys/`, when there is path param "id", send a PUT request to `${serverDomain}/api/surveys/${id}`, ``paste your code here``
+23. Add 5 buttons to survey list item in PublisherSurveyList.jsx, ”Edit”, “Share”, “Result”, “Clone”, “Delete”. When click ”Edit” button, will go to `/publisher/survey-editor/${surveyId}` page. When click “Share” button, copy the string “/participant/survey-reply/${surveyId}” to clipboard and display a success message “Survey url was copied to clipboard, please send to others”. When click “Clone” button, prompt a confirm dialog, if confirm, display a success message “Survey was cloned”. When click “Delete” button, prompt a confirm dialog, if confirm, display a success message “Survey was deleted”., ``paste your PublisherSurveyList.jsx here``
 
 # Notes
 1. Please note it may generate different answer each time.
