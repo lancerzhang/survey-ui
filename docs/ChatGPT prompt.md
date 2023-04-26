@@ -21,6 +21,7 @@
 19. Add some vertical space above Add Input, Add Radio, Add CheckBox buttons. Enable the options, When addelement, by default options should be input box and allow user to input, add placeholder so that it make sense to user, when user update option input box, update the state in the component
 20. How can another page include this SurveyEditor.jsx as component? The parent page can pass the elements to this SurveyEditor, when SurveyEditor change, parent page will get the updates.
 21. Put options under question , and put answer under question for input type
+22. here is my PublisherSurveyEditor.jsx, pls add title and description placeholder, when submit button is click validate if all fields are inputted. if no error, when there is no path param "id",  send a POST request to `${serverDomain}/api/surveys/`, when there is path param "id", send a PUT request to `${serverDomain}/api/surveys/${id}`, ``paste your code here``
 
 # Notes
 1. Please note it may generate different answer each time.
