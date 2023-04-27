@@ -76,6 +76,11 @@ const PublisherSurveyList = () => {
           <List.Item
             key={survey.id}
             onClick={() => handleItemClick(survey.id)}
+            actions={[
+              <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
+              <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
+              <Button onClick={(e) => handleCloneClick(e)}>Clone</Button>,
+              <Button onClick={(e) => handleDeleteClick(e)}>Delete</Button>]}
           >
             <List.Item.Meta
               avatar={<Avatar icon={<UserOutlined />} />}
@@ -83,12 +88,6 @@ const PublisherSurveyList = () => {
               description={survey.title}
             />
             {survey.description}
-            <Space style={{ marginTop: 8 }}>
-              <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>
-              <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>
-              <Button onClick={(e) => handleCloneClick(e)}>Clone</Button>
-              <Button onClick={(e) => handleDeleteClick(e)}>Delete</Button>
-            </Space>
           </List.Item>
         )}
       />
