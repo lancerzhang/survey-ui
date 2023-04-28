@@ -43,28 +43,70 @@ const PublisherSurveyList = () => {
     message.success('Survey URL (TBC) was copied to clipboard, please send to others');
   };
 
-  const handleCloneClick = (e) => {
+  const handleCloneClick = async (e, surveyId) => {
     e.stopPropagation();
+    const surveyToClone = surveys.find((survey) => survey.id === surveyId);
+    const clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
+
+    // Remove 'id' attribute from clonedSurvey, its questions, and options
+    delete clonedSurvey.id;
+    clonedSurvey.questions.forEach((question) => {
+      delete question.id;
+      question.options.forEach((option) => delete option.id);
+    });
+
     confirm({
       title: 'Do you want to clone this survey?',
       icon: <ExclamationCircleOutlined />,
-      onOk() {
-        message.success('Survey was cloned (not implemented)');
+      async onOk() {
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(clonedSurvey),
+        };
+
+        try {
+          const response = await fetch(`${serverDomain}/api/surveys`, requestOptions);
+
+          if (response.ok) {
+            message.success('Survey was cloned');
+            fetchSurveys(pagination.current - 1, pagination.pageSize);
+          } else {
+            message.error('Error cloning survey.');
+          }
+        } catch (error) {
+          message.error('Error cloning survey.');
+        }
       },
     });
   };
 
-  const handleDeleteClick = (e) => {
+  const handleDeleteClick = async (e, surveyId) => {
     e.stopPropagation();
+
     confirm({
       title: 'Do you want to delete this survey?',
       icon: <ExclamationCircleOutlined />,
-      onOk() {
-        message.success('Survey was deleted (not implemented)');
+      async onOk() {
+        const requestOptions = {
+          method: 'DELETE',
+        };
+
+        try {
+          const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`, requestOptions);
+
+          if (response.ok) {
+            message.success('Survey was deleted');
+            fetchSurveys(pagination.current - 1, pagination.pageSize);
+          } else {
+            message.error('Error deleting survey.');
+          }
+        } catch (error) {
+          message.error('Error deleting survey.');
+        }
       },
     });
   };
-
 
   return (
     <div>
@@ -79,8 +121,8 @@ const PublisherSurveyList = () => {
             actions={[
               <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
               <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
-              <Button onClick={(e) => handleCloneClick(e)}>Clone</Button>,
-              <Button onClick={(e) => handleDeleteClick(e)}>Delete</Button>]}
+              <Button onClick={(e) => handleCloneClick(e, survey.id)}>Clone</Button>,
+              <Button onClick={(e) => handleDeleteClick(e, survey.id)}>Delete</Button>]}
           >
             <List.Item.Meta
               avatar={<Avatar icon={<UserOutlined />} />}
