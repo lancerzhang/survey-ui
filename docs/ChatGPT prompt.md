@@ -24,6 +24,10 @@
 22. here is my PublisherSurveyEditor.jsx, pls add title and description placeholder, when submit button is click validate if all fields are inputted. if no error, when there is no path param "id",  send a POST request to `${serverDomain}/api/surveys/`, when there is path param "id", send a PUT request to `${serverDomain}/api/surveys/${id}`, ``paste your code here``
 23. Add 5 buttons to survey list item in PublisherSurveyList.jsx, ”Edit”, “Share”, “Result”, “Clone”, “Delete”. When click ”Edit” button, will go to `/publisher/survey-editor/${surveyId}` page. When click “Share” button, copy the string “/participant/survey-reply/${surveyId}” to clipboard and display a success message “Survey url was copied to clipboard, please send to others”. When click “Clone” button, prompt a confirm dialog, if confirm, display a success message “Survey was cloned”. When click “Delete” button, prompt a confirm dialog, if confirm, display a success message “Survey was deleted”., ``paste your PublisherSurveyList.jsx here``
 24. When click "Clone" butotn, will prompt a confirm dialog, if confirm, get the survey from state, iterate remove all "id" attribte from it, and then send a POST request to `${serverDomain}/api/surveys`, if success,  display a success message “Survey was cloned”. When click "Delete" butotn, will prompt a confirm dialog, if confirm, then send a Detete  request to `${serverDomain}/api/surveys/${id}`, if success,  display a success message “Survey was deleted”. 
+25. Add 3 more input to PublisherSurveyEditor.jsx, startTime & endTime are date time input, when click them use ant design component to pick up date time. maxReplies input is a number.
+26. Add a validation in PublisherSurveyEditor, end time should larger than start time if they are both set.
+27. `sample data json` Given above initialQuestions, pre-fill questions and options in QuestionEditor
+.jsx below, replace question.label to question. questionText , use option. optionText to display. Remove 2nd input which do not have placeholder in “TEXT” question. `your code`
 
 # Notes
 1. Please note it may generate different answer each time.

@@ -1,114 +1,137 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, Radio, Checkbox, Button, Space, Row, Col } from "antd";
 import "antd/dist/antd.css";
 
-const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => {
+const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
+
+	console.log(initialQuestions)
 	const [state, setState] = useState({
-	  nextId: initialQuestions.length + 1,
-	  questions: initialQuestions,
+		nextId: initialQuestions.length > 0 ? Math.max(...initialQuestions.map((q) => q.id)) + 1 : 1,
+		questions: initialQuestions,
 	});
+
+	useEffect(() => {
+		setState({
+			nextId: initialQuestions.length > 0 ? Math.max(...initialQuestions.map(q => q.id)) + 1 : 1,
+			questions: initialQuestions,
+		});
+	}, [initialQuestions]);
+
+	useEffect(() => {
+		onQuestionsChange(state.questions);
+	}, [state.questions]);
 
 	const addQuestion = (questionType) => {
 		setState((prevState) => {
-		  const newState = {
-			...prevState,
-			nextId: prevState.nextId + 1,
-			questions: [
-			  ...prevState.questions,
-			  {
-				id: prevState.nextId,
-				type: questionType,
-				label: '',
-				value: questionType === 'checkbox' ? [] : '',
-				options: questionType === 'input' ? [] : ['', ''],
-			  },
-			],
-		  };
-		  onQuestionsChange(newState.questions);
-		  return newState;
+			const newState = {
+				...prevState,
+				questions: [
+					...prevState.questions,
+					{
+						questionType: questionType,
+						questionText: '',
+						options: questionType === 'TEXT' ? [] : ['', ''],
+					},
+				],
+			};
+			onQuestionsChange(newState.questions);
+			return newState;
 		});
-	  };
+	};
 
-	  const removeQuestion = (id) => {
+	const removeQuestion = (questionIndex) => {
 		setState((prevState) => {
-		  const newState = {
-			...prevState,
-			questions: prevState.questions.filter((question) => question.id !== id),
-		  };
-		  onQuestionsChange(newState.questions);
-		  return newState;
+			const newState = {
+				...prevState,
+				questions: prevState.questions.filter(
+					(_, index) => index !== questionIndex
+				),
+			};
+			onQuestionsChange(newState.questions);
+			return newState;
 		});
-	  };
+	};
 
-	const updateQuestion = (id, newLabel, newValue) => {
+	const updateQuestion = (questionIndex, newQuestionText) => {
 		setState((prevState) => {
-			const questions = prevState.questions.map((question) => {
-				if (question.id === id) {
-					return { ...question, label: newLabel, value: newValue };
+			const questions = prevState.questions.map((question, index) => {
+				if (index === questionIndex) {
+					return { ...question, questionText: newQuestionText };
 				}
 				return question;
 			});
+			onQuestionsChange(questions);
 			return { ...prevState, questions };
 		});
 	};
 
-	const addOption = (id) => {
+	const addOption = (questionIndex) => {
 		setState((prevState) => {
-			const questions = prevState.questions.map((question) => {
-				if (question.id === id) {
-					return { ...question, options: [...question.options, ""] };
+			const questions = prevState.questions.map((question, idx) => {
+				if (idx === questionIndex) {
+					return {
+						...question,
+						options: [
+							...question.options,
+							{ optionText: '' },
+						],
+					};
 				}
 				return question;
 			});
+
+			onQuestionsChange(questions);
 			return { ...prevState, questions };
 		});
 	};
 
-	const updateOptions = (id, index, newValue) => {
+
+	const updateOptions = (questionIndex, optionIndex, newOptionText) => {
 		setState((prevState) => {
-			const questions = prevState.questions.map((question) => {
-				if (question.id === id) {
-					const newOptions = [...question.options];
-					newOptions[index] = newValue;
-					return { ...question, options: newOptions };
+			const questions = prevState.questions.map((question, idx) => {
+				if (idx === questionIndex) {
+					return {
+						...question,
+						options: question.options.map((option, optIdx) => {
+							if (optIdx === optionIndex) {
+								return { ...option, optionText: newOptionText };
+							}
+							return option;
+						}),
+					};
 				}
 				return question;
 			});
+
+			onQuestionsChange(questions);
 			return { ...prevState, questions };
 		});
 	};
+
 
 	return (
 		<div>
 			<Space direction="vertical" style={{ width: "100%" }} size="large">
-				{state.questions.map((question, index) => {
-					switch (question.type) {
-						case "input":
+				{state.questions.map((question, questionIndex) => {
+					switch (question.questionType) {
+						case "TEXT":
 							return (
-								<Row key={question.id} align="middle" gutter={[8, 16]}>
+								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
-										<span>Q{index + 1}.</span>
+										<span>Q{questionIndex + 1}.</span>
 									</Col>
 									<Col span={5}>
 										<Input
 											placeholder="Type your question here."
-											value={question.label}
+											value={question.questionText}
 											onChange={(e) =>
-												updateQuestion(question.id, e.target.value, question.value)
-											}
-										/>
-									</Col>
-									<Col span={12}>
-										<Input
-											value={question.value}
-											onChange={(e) =>
-												updateQuestion(question.id, question.label, e.target.value)
+												updateQuestion(questionIndex, e.target.value)
 											}
 										/>
 									</Col>
 									<Col span={6}>
 										<Button
-											onClick={() => removeQuestion(question.id)}
+											onClick={() => removeQuestion(questionIndex)}
 											type="primary"
 											danger
 										>
@@ -117,35 +140,30 @@ const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => 
 									</Col>
 								</Row>
 							);
-						case "radio":
+						case "RADIO":
 							return (
-								<Row key={question.id} align="middle" gutter={[8, 16]}>
+								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
-										<span>Q{index + 1}.</span>
+										<span>Q{questionIndex + 1}.</span>
 									</Col>
 									<Col span={5}>
 										<Input
 											placeholder="Type your question here."
-											value={question.label}
+											value={question.questionText}
 											onChange={(e) =>
-												updateQuestion(question.id, e.target.value, question.value)
+												updateQuestion(questionIndex, e.target.value)
 											}
 										/>
 									</Col>
 									<Col span={12}>
-										<Radio.Group
-											value={question.value}
-											onChange={(e) =>
-												updateQuestion(question.id, question.label, e.target.value)
-											}
-										>
-											{question.options.map((option, index) => (
-												<Radio key={index} value={option}>
+										<Radio.Group>
+											{question.options.map((option, optionIndex) => (
+												<Radio key={optionIndex}>
 													<Input
 														placeholder="Option text"
-														value={option}
+														value={option.optionText}
 														onChange={(e) =>
-															updateOptions(question.id, index, e.target.value)
+															updateOptions(questionIndex, optionIndex, e.target.value)
 														}
 													/>
 												</Radio>
@@ -155,13 +173,13 @@ const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => 
 									<Col span={6}>
 										<Space>
 											<Button
-												onClick={() => addOption(question.id)}
+												onClick={() => addOption(questionIndex)}
 												type="primary"
 											>
 												Add Option
 											</Button>
 											<Button
-												onClick={() => removeQuestion(question.id)}
+												onClick={() => removeQuestion(questionIndex)}
 												type="primary"
 												danger
 											>
@@ -171,35 +189,30 @@ const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => 
 									</Col>
 								</Row>
 							);
-						case "checkbox":
+						case "CHECKBOX":
 							return (
-								<Row key={question.id} align="middle" gutter={[8, 16]}>
+								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
-										<span>Q{index + 1}.</span>
+										<span>Q{questionIndex + 1}.</span>
 									</Col>
 									<Col span={5}>
 										<Input
 											placeholder="Type your question here."
-											value={question.label}
+											value={question.questionText}
 											onChange={(e) =>
-												updateQuestion(question.id, e.target.value, question.value)
+												updateQuestion(questionIndex, e.target.value)
 											}
 										/>
 									</Col>
 									<Col span={12}>
-										<Checkbox.Group
-											value={question.value}
-											onChange={(checkedValues) =>
-												updateQuestion(question.id, question.label, checkedValues)
-											}
-										>
-											{question.options.map((option, index) => (
-												<Checkbox key={index} value={option}>
+										<Checkbox.Group>
+											{question.options.map((option, optionIndex) => (
+												<Checkbox key={optionIndex}>
 													<Input
 														placeholder="Option text"
-														value={option}
+														value={option.optionText}
 														onChange={(e) =>
-															updateOptions(question.id, index, e.target.value)
+															updateOptions(questionIndex, optionIndex, e.target.value)
 														}
 													/>
 												</Checkbox>
@@ -209,13 +222,13 @@ const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => 
 									<Col span={6}>
 										<Space>
 											<Button
-												onClick={() => addOption(question.id)}
+												onClick={() => addOption(questionIndex)}
 												type="primary"
 											>
 												Add Option
 											</Button>
 											<Button
-												onClick={() => removeQuestion(question.id)}
+												onClick={() => removeQuestion(questionIndex)}
 												type="primary"
 												danger
 											>
@@ -231,13 +244,13 @@ const QuestionEditor  = ({ questions: initialQuestions, onQuestionsChange }) => 
 				})}
 			</Space>
 			<Space style={{ marginTop: "16px" }}>
-				<Button onClick={() => addQuestion("input")} type="primary">
+				<Button onClick={() => addQuestion("TEXT")} type="primary">
 					Add Input
 				</Button>
-				<Button onClick={() => addQuestion("radio")} type="primary">
+				<Button onClick={() => addQuestion("RADIO")} type="primary">
 					Add Radio
 				</Button>
-				<Button onClick={() => addQuestion("checkbox")} type="primary">
+				<Button onClick={() => addQuestion("CHECKBOX")} type="primary">
 					Add Checkbox
 				</Button>
 			</Space>

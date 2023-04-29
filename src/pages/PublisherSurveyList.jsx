@@ -125,11 +125,9 @@ const PublisherSurveyList = () => {
               <Button onClick={(e) => handleDeleteClick(e, survey.id)}>Delete</Button>]}
           >
             <List.Item.Meta
-              avatar={<Avatar icon={<UserOutlined />} />}
-              title={survey.userId}
-              description={survey.title}
+              title={survey.title}
+              description={survey.description}
             />
-            {survey.description}
           </List.Item>
         )}
       />

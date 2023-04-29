@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Form, Input, Switch, Button, Divider, notification } from 'antd';
+import { useParams, useHistory } from 'react-router-dom';
+import { Form, Input, Switch, Button, Divider, notification, DatePicker, InputNumber, Space } from 'antd';
 import QuestionEditor from './QuestionEditor';
+import moment from 'moment';
 
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const PublisherSurveyEditor = () => {
       const response = await fetch(`${serverDomain}/api/surveys/${id}`);
       const data = await response.json();
       setSurvey(data);
+      setQuestions(data.questions);
     };
     if (id === 'new') {
       // Initialize a new survey
@@ -35,12 +37,17 @@ const PublisherSurveyEditor = () => {
       values.userId = 1;
     }
 
-    console.log('Form values:', values);
+    // Filter out null values for startTime and endTime
+    const filteredValues = Object.fromEntries(
+      Object.entries(values).filter(([key, value]) => !(value === null && (key === 'startTime' || key === 'endTime')))
+    );
+
+    console.log('Form values:', filteredValues);
 
     const requestOptions = {
       method: id === 'new' ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      body: JSON.stringify(filteredValues),
     };
 
     try {
@@ -61,12 +68,33 @@ const PublisherSurveyEditor = () => {
     }
   };
 
+  const validateEndTime = (_, value) => {
+    const startTime = form.getFieldValue('startTime');
+
+    if (value && startTime && !value.isAfter(startTime)) {
+      return Promise.reject(new Error('End time should be greater than start time'));
+    }
+    return Promise.resolve();
+  };
+
+
+  const [form] = Form.useForm();
+
+  const history = useHistory();
+
+  const handleClose = () => {
+    history.goBack();
+  };
 
   return (
     <div>
       {survey && (
         <Form
-          initialValues={survey}
+          initialValues={{
+            ...survey,
+            startTime: survey.startTime ? moment(survey.startTime) : null,
+            endTime: survey.endTime ? moment(survey.endTime) : null,
+          }}
           onFinish={onFinish}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 14 }}
@@ -96,13 +124,29 @@ const PublisherSurveyEditor = () => {
           <Form.Item label="Allow resubmit" name="allowResubmit" valuePropName="checked">
             <Switch />
           </Form.Item>
+          <Form.Item label="Start Time" name="startTime">
+            <DatePicker showTime />
+          </Form.Item>
+          <Form.Item
+            label="End Time"
+            name="endTime"
+            rules={[{ validator: validateEndTime }]}
+          >
+            <DatePicker showTime />
+          </Form.Item>
+          <Form.Item label="Max Replies" name="maxReplies">
+            <InputNumber min={1} />
+          </Form.Item>
           <Divider />
           <QuestionEditor questions={questions} onQuestionsChange={handleQuestionsChange} />
           <Divider />
           <Form.Item wrapperCol={{ offset: 4 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+              <Button onClick={handleClose}>Close</Button>
+            </Space>
           </Form.Item>
         </Form>
       )}

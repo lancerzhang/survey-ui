@@ -29,8 +29,9 @@ const LayoutWrapper = ({ children }) => {
       <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
       <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>
       <Menu.Item key="3" onClick={() => handleClick('/publisher/templates')}>Templates</Menu.Item>
+      <Menu.Item key="3" onClick={() => handleClick('/publisher/delegates')}>Delegates</Menu.Item>
       {/* Participant links */}
-      <Menu.Item key="4" onClick={() => handleClick('/participant/survey-replies')}>Survey Replies</Menu.Item>
+      <Menu.Item key="4" onClick={() => handleClick('/participant/survey-replies')}>My Replies</Menu.Item>
     </Menu>
   );
 
@@ -58,7 +59,7 @@ const LayoutWrapper = ({ children }) => {
       </Header>
       <Content style={{ padding: '0 50px' }}>
         <div className={styles['site-layout-content']}>{children}</div>
-        </Content>
+      </Content>
       <Footer style={{ textAlign: 'center' }}>Survey-UI ©2023 Created by YourName</Footer>
     </Layout>
   );
