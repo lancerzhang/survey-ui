@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Input, Radio, Checkbox, Button, Space, Row, Col } from "antd";
+import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 
 const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
@@ -109,6 +110,23 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 	};
 
 
+	const removeOption = (questionIndex, optionIndex) => {
+		setState((prevState) => {
+			const questions = prevState.questions.map((question, idx) => {
+				if (idx === questionIndex) {
+					return {
+						...question,
+						options: question.options.filter((_, optIdx) => optIdx !== optionIndex),
+					};
+				}
+				return question;
+			});
+
+			onQuestionsChange(questions);
+			return { ...prevState, questions };
+		});
+	};
+
 	return (
 		<div>
 			<Space direction="vertical" style={{ width: "100%" }} size="large">
@@ -135,7 +153,7 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 											type="primary"
 											danger
 										>
-											Remove
+											Remove Question
 										</Button>
 									</Col>
 								</Row>
@@ -166,6 +184,14 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 															updateOptions(questionIndex, optionIndex, e.target.value)
 														}
 													/>
+													<Tooltip title="Remove Option">
+														<Button
+															onClick={() => removeOption(questionIndex, optionIndex)}
+															type="text"
+															icon={<DeleteOutlined />}
+															danger
+														/>
+													</Tooltip>
 												</Radio>
 											))}
 										</Radio.Group>
@@ -183,7 +209,7 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 												type="primary"
 												danger
 											>
-												Remove
+												Remove Question
 											</Button>
 										</Space>
 									</Col>
@@ -215,6 +241,14 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 															updateOptions(questionIndex, optionIndex, e.target.value)
 														}
 													/>
+													<Tooltip title="Remove Option">
+														<Button
+															onClick={() => removeOption(questionIndex, optionIndex)}
+															type="text"
+															icon={<DeleteOutlined />}
+															danger
+														/>
+													</Tooltip>
 												</Checkbox>
 											))}
 										</Checkbox.Group>
@@ -232,7 +266,7 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 												type="primary"
 												danger
 											>
-												Remove
+												Remove Question
 											</Button>
 										</Space>
 									</Col>
