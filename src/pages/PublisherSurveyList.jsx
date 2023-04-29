@@ -9,6 +9,7 @@ const PublisherSurveyList = () => {
   const [surveys, setSurveys] = useState([]);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+  const uiDomain = process.env.REACT_APP_UI_DOMAIN;
 
   const fetchSurveys = async (pageNumber = 0, pageSize = 10) => {
     const response = await fetch(`${serverDomain}/api/surveys/user/1?page=${pageNumber}&size=${pageSize}`);
@@ -38,9 +39,9 @@ const PublisherSurveyList = () => {
 
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
-    const shareUrl = `/participant/survey-reply/${surveyId}`;
+    const shareUrl = `${uiDomain}/participant/survey-replies/${surveyId}`;
     navigator.clipboard.writeText(shareUrl);
-    message.success('Survey URL (TBC) was copied to clipboard, please send to others');
+    message.success('Survey URL was copied to clipboard, please send to others.');
   };
 
   const handleCloneClick = async (e, surveyId) => {
