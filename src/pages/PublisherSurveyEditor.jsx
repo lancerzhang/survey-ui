@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Form, Input, Switch, Button, Divider, notification, DatePicker, InputNumber, Space } from 'antd';
 import QuestionEditor from './QuestionEditor';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
@@ -125,14 +125,22 @@ const PublisherSurveyEditor = () => {
             <Switch />
           </Form.Item>
           <Form.Item label="Start Time" name="startTime">
-            <DatePicker showTime />
+            <DatePicker
+              showTime
+              onChange={(value) => {
+                const utcValue = value ? moment.tz(value, 'UTC') : null;
+                form.setFieldsValue({ startTime: utcValue });
+              }}
+            />
           </Form.Item>
-          <Form.Item
-            label="End Time"
-            name="endTime"
-            rules={[{ validator: validateEndTime }]}
-          >
-            <DatePicker showTime />
+          <Form.Item label="End Time" name="endTime" rules={[{ validator: validateEndTime }]}>
+            <DatePicker
+              showTime
+              onChange={(value) => {
+                const utcValue = value ? moment.tz(value, 'UTC') : null;
+                form.setFieldsValue({ endTime: utcValue });
+              }}
+            />
           </Form.Item>
           <Form.Item label="Max Replies" name="maxReplies">
             <InputNumber min={1} />
