@@ -146,7 +146,7 @@ const PublisherSurveyEditor = () => {
             <InputNumber min={1} />
           </Form.Item>
           <Divider />
-          <QuestionEditor questions={questions} onQuestionsChange={handleQuestionsChange} />
+          <QuestionEditor form={form} questions={questions} onQuestionsChange={handleQuestionsChange} />
           <Divider />
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>

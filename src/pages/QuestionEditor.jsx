@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip, Divider } from "antd";
+import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip, Divider, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 
-const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
+const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }) => {
 
 	console.log(initialQuestions)
 	const [state, setState] = useState({
@@ -128,7 +128,7 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 	};
 
 	return (
-		<div>
+		<div >
 			<h2>Questions</h2>
 			<Space direction="vertical" style={{ width: "100%" }} size="large">
 				{state.questions.map((question, questionIndex) => {
@@ -140,14 +140,22 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 									<Col span={1}>
 										<span>Q{questionIndex + 1}.</span>
 									</Col>
-									<Col span={5}>
-										<Input
-											placeholder="Type your question here."
-											value={question.questionText}
-											onChange={(e) =>
-												updateQuestion(questionIndex, e.target.value)
-											}
-										/>
+									<Col span={9}>
+										<Form.Item
+											form={form}
+											name={`question_${questionIndex}`}
+											rules={[
+												{ required: true, message: 'Please input a question.' },
+											]}
+										>
+											<Input
+												placeholder="Type your question here."
+												value={question.questionText}
+												onChange={(e) =>
+													updateQuestion(questionIndex, e.target.value)
+												}
+											/>
+										</Form.Item>
 									</Col>
 									<Col span={6}>
 										<Button
@@ -168,25 +176,41 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 										<span>Q{questionIndex + 1}.</span>
 									</Col>
 									<Col span={5}>
-										<Input
-											placeholder="Type your question here."
-											value={question.questionText}
-											onChange={(e) =>
-												updateQuestion(questionIndex, e.target.value)
-											}
-										/>
+										<Form.Item
+											form={form}
+											name={`question_${questionIndex}`}
+											rules={[
+												{ required: true, message: 'Please input a question.' },
+											]}
+										>
+											<Input
+												placeholder="Type your question here."
+												value={question.questionText}
+												onChange={(e) =>
+													updateQuestion(questionIndex, e.target.value)
+												}
+											/>
+										</Form.Item>
 									</Col>
 									<Col span={12}>
 										<Radio.Group>
 											{question.options.map((option, optionIndex) => (
 												<Radio key={optionIndex}>
-													<Input
-														placeholder="Option text"
-														value={option.optionText}
-														onChange={(e) =>
-															updateOptions(questionIndex, optionIndex, e.target.value)
-														}
-													/>
+													<Form.Item
+														form={form}
+														name={`question_${questionIndex}_option_${optionIndex}`}
+														rules={[
+															{ required: true, message: 'Please input an option.' },
+														]}
+													>
+														<Input
+															placeholder="Option text"
+															value={option.optionText}
+															onChange={(e) =>
+																updateOptions(questionIndex, optionIndex, e.target.value)
+															}
+														/>
+													</Form.Item>
 													<Tooltip title="Remove Option">
 														<Button
 															onClick={() => removeOption(questionIndex, optionIndex)}
@@ -226,25 +250,42 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 										<span>Q{questionIndex + 1}.</span>
 									</Col>
 									<Col span={5}>
-										<Input
-											placeholder="Type your question here."
-											value={question.questionText}
-											onChange={(e) =>
-												updateQuestion(questionIndex, e.target.value)
-											}
-										/>
+										<Form.Item
+											form={form}
+											name={`question_${questionIndex}`}
+											rules={[
+												{ required: true, message: 'Please input a question.' },
+											]}
+										>
+											<Input
+												placeholder="Type your question here."
+												value={question.questionText}
+												onChange={(e) =>
+													updateQuestion(questionIndex, e.target.value)
+												}
+											/>
+										</Form.Item>
 									</Col>
 									<Col span={12}>
 										<Checkbox.Group>
 											{question.options.map((option, optionIndex) => (
 												<Checkbox key={optionIndex}>
-													<Input
-														placeholder="Option text"
-														value={option.optionText}
-														onChange={(e) =>
-															updateOptions(questionIndex, optionIndex, e.target.value)
-														}
-													/>
+													<Form.Item
+														form={form}
+														name={`question_${questionIndex}_option_${optionIndex}`}
+														rules={[
+															{ required: true, message: 'Please input an option.' },
+														]}
+													>
+														<Input
+															placeholder="Option text"
+															value={option.optionText}
+															onChange={(e) =>
+																updateOptions(questionIndex, optionIndex, e.target.value)
+															}
+														/>
+													</Form.Item>
+
 													<Tooltip title="Remove Option">
 														<Button
 															onClick={() => removeOption(questionIndex, optionIndex)}

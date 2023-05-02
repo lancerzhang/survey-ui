@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 const { confirm } = Modal;
 
-const PublisherSurveyList = () => {
+const PublisherSurveys = () => {
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const uiDomain = process.env.REACT_APP_UI_DOMAIN;
   const [surveys, setSurveys] = useState([]);
@@ -39,7 +39,7 @@ const PublisherSurveyList = () => {
 
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
-    const shareUrl = `${uiDomain}/participant/reply/${surveyId}`;
+    const shareUrl = `${uiDomain}/participant/reply-editor/${surveyId}`;
     navigator.clipboard.writeText(shareUrl);
     message.success('Survey URL was copied to clipboard, please send to others.');
   };
@@ -142,4 +142,4 @@ const PublisherSurveyList = () => {
   );
 };
 
-export default PublisherSurveyList;
+export default PublisherSurveys;

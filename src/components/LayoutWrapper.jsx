@@ -29,9 +29,9 @@ const LayoutWrapper = ({ children }) => {
       <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
       <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>
       <Menu.Item key="3" onClick={() => handleClick('/publisher/templates')}>Templates</Menu.Item>
-      <Menu.Item key="3" onClick={() => handleClick('/publisher/delegates')}>Delegates</Menu.Item>
+      <Menu.Item key="4" onClick={() => handleClick('/publisher/delegates')}>Delegates</Menu.Item>
       {/* Participant links */}
-      <Menu.Item key="4" onClick={() => handleClick('/participant/reply-list')}>My Replies</Menu.Item>
+      <Menu.Item key="5" onClick={() => handleClick('/participant/replies')}>My Replies</Menu.Item>
     </Menu>
   );
 
