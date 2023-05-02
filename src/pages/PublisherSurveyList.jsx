@@ -6,10 +6,10 @@ import { useHistory } from 'react-router-dom';
 const { confirm } = Modal;
 
 const PublisherSurveyList = () => {
-  const [surveys, setSurveys] = useState([]);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const uiDomain = process.env.REACT_APP_UI_DOMAIN;
+  const [surveys, setSurveys] = useState([]);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
 
   const fetchSurveys = async (pageNumber = 0, pageSize = 10) => {
     const response = await fetch(`${serverDomain}/api/surveys/user/1?page=${pageNumber}&size=${pageSize}`);
@@ -39,7 +39,7 @@ const PublisherSurveyList = () => {
 
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
-    const shareUrl = `${uiDomain}/participant/survey-replies/${surveyId}`;
+    const shareUrl = `${uiDomain}/participant/reply/${surveyId}`;
     navigator.clipboard.writeText(shareUrl);
     message.success('Survey URL was copied to clipboard, please send to others.');
   };

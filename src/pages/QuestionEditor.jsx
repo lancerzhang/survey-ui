@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip } from "antd";
+import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip, Divider } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 
@@ -129,11 +129,13 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 
 	return (
 		<div>
+			<h2>Questions</h2>
 			<Space direction="vertical" style={{ width: "100%" }} size="large">
 				{state.questions.map((question, questionIndex) => {
+					let content;
 					switch (question.questionType) {
 						case "TEXT":
-							return (
+							content = (
 								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
 										<span>Q{questionIndex + 1}.</span>
@@ -158,8 +160,9 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 									</Col>
 								</Row>
 							);
+							break;
 						case "RADIO":
-							return (
+							content = (
 								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
 										<span>Q{questionIndex + 1}.</span>
@@ -215,8 +218,9 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 									</Col>
 								</Row>
 							);
+							break;
 						case "CHECKBOX":
-							return (
+							content = (
 								<Row key={questionIndex} align="middle" gutter={[8, 16]}>
 									<Col span={1}>
 										<span>Q{questionIndex + 1}.</span>
@@ -272,9 +276,16 @@ const QuestionEditor = ({ questions: initialQuestions, onQuestionsChange }) => {
 									</Col>
 								</Row>
 							);
+							break;
 						default:
 							return null;
 					}
+					return (
+						<React.Fragment key={questionIndex}>
+							{content}
+							<Divider />
+						</React.Fragment>
+					);
 				})}
 			</Space>
 			<Space style={{ marginTop: "16px" }}>
