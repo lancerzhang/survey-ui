@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { List, Avatar, Pagination, Button, Space, message, Modal } from 'antd';
-import { UserOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import moment from 'moment-timezone';
+import { Button, message, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import PublisherList from './PublisherList';
 
 const { confirm } = Modal;
 
 const PublisherSurveys = () => {
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const uiDomain = process.env.REACT_APP_UI_DOMAIN;
-  const [surveys, setSurveys] = useState([]);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
-
-  const fetchSurveys = async (pageNumber = 0, pageSize = 10) => {
-    const response = await fetch(`${serverDomain}/api/surveys/user/1?page=${pageNumber}&size=${pageSize}`);
-    const data = await response.json();
-    setSurveys(data.content);
-    setPagination({ ...pagination, total: data.totalElements });
-  };
-
-  useEffect(() => {
-    fetchSurveys(pagination.current - 1, pagination.pageSize);
-  }, [pagination.current, pagination.pageSize]);
-
-  const handlePaginationChange = (page, pageSize) => {
-    setPagination({ ...pagination, current: page, pageSize: pageSize || 10 });
-  };
-
+  const fetchDataUrl = `${serverDomain}/api/surveys/user/1?`;
   const history = useHistory();
+  const [refresh, setRefresh] = useState(false);
 
-  const handleItemClick = (surveyId) => {
-    history.push(`/publisher/survey-editor/${surveyId}`);
+  const handleRefresh = () => {
+    setRefresh(!refresh);
   };
 
   const handleEditClick = (e, surveyId) => {
@@ -47,7 +31,8 @@ const PublisherSurveys = () => {
 
   const handleCloneClick = async (e, surveyId) => {
     e.stopPropagation();
-    const surveyToClone = surveys.find((survey) => survey.id === surveyId);
+    const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`);
+    const surveyToClone = await response.json();
     const clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
 
     // Remove 'id' attribute from clonedSurvey, its questions, and options
@@ -56,6 +41,9 @@ const PublisherSurveys = () => {
       delete question.id;
       question.options.forEach((option) => delete option.id);
     });
+
+    // Add '(clone)' to clonedSurvey title
+    clonedSurvey.title = `${clonedSurvey.title} (clone)`;
 
     confirm({
       title: 'Do you want to clone this survey?',
@@ -72,7 +60,7 @@ const PublisherSurveys = () => {
 
           if (response.ok) {
             message.success('Survey was cloned');
-            fetchSurveys(pagination.current - 1, pagination.pageSize);
+            handleRefresh();
           } else {
             message.error('Error cloning survey.');
           }
@@ -99,7 +87,7 @@ const PublisherSurveys = () => {
 
           if (response.ok) {
             message.success('Survey was deleted');
-            fetchSurveys(pagination.current - 1, pagination.pageSize);
+            handleRefresh();
           } else {
             message.error('Error deleting survey.');
           }
@@ -110,37 +98,20 @@ const PublisherSurveys = () => {
     });
   };
 
-  return (
-    <div>
-      <List
-        itemLayout="vertical"
-        dataSource={surveys}
-        renderItem={(survey) => (
-          <List.Item
-            key={survey.id}
-            onClick={() => handleItemClick(survey.id)}
-            actions={[
-              <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
-              <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
-              <Button onClick={(e) => handleCloneClick(e, survey.id)}>Clone</Button>,
-              <Button onClick={(e) => handleDeleteClick(e, survey.id)}>Delete</Button>]}
-          >
-            <List.Item.Meta
-              title={survey.title}
-              description={moment(survey.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
-            />
-            {survey.description}
-          </List.Item>
+  const renderItemActions = (survey) => [
+    <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
+    <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
+    <Button onClick={(e) => handleCloneClick(e, survey.id, handleRefresh)}>Clone</Button>,
+    <Button onClick={(e) => handleDeleteClick(e, survey.id, handleRefresh)}>Delete</Button>,
+  ];
 
-        )}
-      />
-      <Pagination
-        current={pagination.current}
-        pageSize={pagination.pageSize}
-        total={pagination.total}
-        onChange={handlePaginationChange}
-      />
-    </div>
+  return (
+    <PublisherList
+      fetchDataUrl={fetchDataUrl}
+      onItemClick={handleEditClick}
+      renderItemActions={renderItemActions}
+      refresh={refresh}
+    />
   );
 };
 

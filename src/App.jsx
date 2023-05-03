@@ -8,7 +8,7 @@ import QuestionEditor from './pages/QuestionEditor';
 import PublisherSurveyResults from './pages/PublisherSurveyResults';
 import PublisherReportDownload from './pages/PublisherReportDownload';
 import ParticipantReplies from './pages/ParticipantReplies';
-import ParticipantReply from './pages/ParticipantReply';
+import ParticipantReplyEditor from './pages/ParticipantReplyEditor';
 
 const App = () => {
     return (
@@ -19,7 +19,7 @@ const App = () => {
                     <Route path="/QuestionEditor" component={QuestionEditor} />
                     <Route path="/publisher/survey-editor/:id" component={PublisherSurveyEditor} />
                     <Route path="/publisher/surveys" component={PublisherSurveys} />
-                    <Route path="/participant/reply-editor/:id" component={ParticipantReply} />
+                    <Route path="/participant/reply-editor/:id" component={ParticipantReplyEditor} />
                     <Route path="/participant/replies" component={ParticipantReplies} />
                     <Route path="/publisher/templates" component={PublisherTemplates} />
                     <Route path="/publisher/survey-results/:id" component={PublisherSurveyResults} />

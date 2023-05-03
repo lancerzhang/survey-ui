@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Typography, Form, Input, Radio, Checkbox, Button, Space, Row, Col, message } from 'antd';
+import { Typography, Form, Input, Radio, Checkbox, Button, Space, Row, notification, message } from 'antd';
 import moment from 'moment';
 
-const ParticipantReply = () => {
+const ParticipantReplyEditor = () => {
     const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
     const [survey, setSurvey] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -41,8 +41,66 @@ const ParticipantReply = () => {
         loadSurvey();
     }, [id, history]);
 
-    const handleSubmit = (values) => {
-        // Handle form submission logic here
+    const onFinish = async (values) => {
+        const userId = 1;
+        const surveyId = parseInt(id);
+
+        const questionReplies = survey.questions.map((question, questionIndex) => {
+            const questionReply = {
+                questionId: question.id,
+            };
+
+            if (question.questionType === 'TEXT') {
+                questionReply.replyText = values[`question_${questionIndex}`];
+            } else if (question.questionType === 'RADIO') {
+                const selectedOption = question.options.find(
+                    (option) => option.optionText === values[`question_${questionIndex}`]
+                );
+
+                questionReply.optionReplies = [
+                    {
+                        optionId: selectedOption.id,
+                        selected: true,
+                    },
+                ];
+            } else if (question.questionType === 'CHECKBOX') {
+                questionReply.optionReplies = question.options.map((option) => ({
+                    optionId: option.id,
+                    selected: values[`question_${questionIndex}`].includes(option.optionText),
+                }));
+            }
+
+            return questionReply;
+        });
+
+        const requestBody = {
+            userId,
+            surveyId,
+            questionReplies,
+        };
+
+        console.log('Request body:', requestBody);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+        };
+
+        try {
+            const response = await fetch(
+                `${serverDomain}/api/survey-replies/`,
+                requestOptions
+            );
+
+            if (response.ok) {
+                notification.success({ message: 'Survey replied successfully!' });
+            } else {
+                notification.error({ message: 'Error replying survey.' });
+            }
+        } catch (error) {
+            notification.error({ message: 'Error replying survey.' });
+        }
     };
 
     if (loading) {
@@ -56,20 +114,25 @@ const ParticipantReply = () => {
     return (
         <div>
             <Typography.Title>{survey.title}</Typography.Title>
-            <Form onFinish={handleSubmit}>
-
+            <Form onFinish={onFinish}>
                 {survey.questions.map((question, questionIndex) => (
                     <React.Fragment key={questionIndex}>
                         <Typography.Title level={4}>
                             Q{questionIndex + 1}. {question.questionText}
                         </Typography.Title>
                         {question.questionType === 'TEXT' && (
-                            <Form.Item name={`question_${questionIndex}`}>
+                            <Form.Item name={`question_${questionIndex}`}
+                                rules={[
+                                    { required: true, message: 'Please input a question.' },
+                                ]}>
                                 <Input placeholder="Type your answer here" />
                             </Form.Item>
                         )}
                         {question.questionType === 'RADIO' && (
-                            <Form.Item name={`question_${questionIndex}`}>
+                            <Form.Item name={`question_${questionIndex}`}
+                                rules={[
+                                    { required: true, message: 'Please select an option.' },
+                                ]}>
                                 <Radio.Group>
                                     {question.options.map((option, optionIndex) => (
                                         <Radio key={optionIndex} value={option.optionText}>
@@ -80,7 +143,10 @@ const ParticipantReply = () => {
                             </Form.Item>
                         )}
                         {question.questionType === 'CHECKBOX' && (
-                            <Form.Item name={`question_${questionIndex}`}>
+                            <Form.Item name={`question_${questionIndex}`}
+                                rules={[
+                                    { required: true, message: 'Please select an option.' },
+                                ]}>
                                 <Checkbox.Group>
                                     {question.options.map((option, optionIndex) => (
                                         <Checkbox key={optionIndex} value={option.optionText}>
@@ -103,4 +169,4 @@ const ParticipantReply = () => {
     );
 };
 
-export default ParticipantReply;
+export default ParticipantReplyEditor;
