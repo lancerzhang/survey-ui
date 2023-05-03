@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { List, Avatar, Pagination, Button, Space, message, Modal } from 'antd';
 import { UserOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment-timezone';
 
 const { confirm } = Modal;
 
@@ -111,7 +112,6 @@ const PublisherSurveys = () => {
 
   return (
     <div>
-      <h1>Surveys</h1>
       <List
         itemLayout="vertical"
         dataSource={surveys}
@@ -127,9 +127,11 @@ const PublisherSurveys = () => {
           >
             <List.Item.Meta
               title={survey.title}
-              description={survey.description}
+              description={moment(survey.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
             />
+            {survey.description}
           </List.Item>
+
         )}
       />
       <Pagination
