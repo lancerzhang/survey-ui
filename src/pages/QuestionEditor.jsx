@@ -7,13 +7,11 @@ const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }
 
 	console.log(initialQuestions)
 	const [state, setState] = useState({
-		nextId: initialQuestions.length > 0 ? Math.max(...initialQuestions.map((q) => q.id)) + 1 : 1,
 		questions: initialQuestions,
 	});
 
 	useEffect(() => {
 		setState({
-			nextId: initialQuestions.length > 0 ? Math.max(...initialQuestions.map(q => q.id)) + 1 : 1,
 			questions: initialQuestions,
 		});
 	}, [initialQuestions]);

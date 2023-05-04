@@ -12,7 +12,8 @@ const ParticipantReplies = () => {
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
 
   const fetchReplies = async (pageNumber = 0, pageSize = 10) => {
-    const response = await fetch(`${serverDomain}/api/replies/user/1?page=${pageNumber}&size=${pageSize}`);
+    const userId = 1;
+    const response = await fetch(`${serverDomain}/api/surveys/replied/user/${userId}?page=${pageNumber}&size=${pageSize}`);
     const data = await response.json();
     setReplies(data.content);
     setPagination({ ...pagination, total: data.totalElements });
@@ -29,13 +30,12 @@ const ParticipantReplies = () => {
   const history = useHistory();
 
   const handleItemClick = (replyId) => {
-    history.push(`/publisher/reply-editor/${replyId}`);
+    history.push(`/participant/reply-editor/${replyId}`);
   };
 
 
   return (
     <div>
-      <h1>Replies</h1>
       <List
         itemLayout="vertical"
         dataSource={replies}

@@ -9,7 +9,8 @@ const { confirm } = Modal;
 const PublisherSurveys = () => {
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const uiDomain = process.env.REACT_APP_UI_DOMAIN;
-  const fetchDataUrl = `${serverDomain}/api/surveys/user/1?`;
+  const userId = 1;
+  const fetchDataUrl = `${serverDomain}/api/surveys/user/${userId}?`;
   const history = useHistory();
   const [refresh, setRefresh] = useState(false);
 

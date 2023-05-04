@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Space, Row, Col, Button } from 'antd';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { UserOutlined, MenuOutlined } from '@ant-design/icons';
 import styles from './LayoutWrapper.module.css';
 import useMediaQuery from '../hooks/useMediaQuery';
@@ -16,6 +16,21 @@ const LayoutWrapper = ({ children }) => {
     history.push(path);
   };
 
+  // Get the current location
+  const location = useLocation();
+
+  // Determine the selected key based on the current pathname
+  const selectedKey = useMemo(() => {
+    const path = location.pathname;
+    if (path.startsWith('/publisher/surveys')) return '1';
+    if (path.startsWith('/publisher/survey-editor')) return '2';
+    if (path.startsWith('/publisher/templates')) return '3';
+    if (path.startsWith('/publisher/delegates')) return '4';
+    if (path.startsWith('/participant/replies')) return '5';
+    if (path.startsWith('/participant/reply-editor')) return '5';
+    return '1';
+  }, [location.pathname]);
+
   const userMenu = (
     <Menu>
       <Menu.Item key="1" onClick={() => handleClick('/my-profile')}>My Profile</Menu.Item>
@@ -25,7 +40,7 @@ const LayoutWrapper = ({ children }) => {
 
   const navMenu = (
     <div style={{ minWidth: '600px' }}>
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Menu theme="dark" mode="horizontal" selectedKeys={[selectedKey]}>
         {/* Publisher links */}
         <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
         <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>

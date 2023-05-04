@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Form, Input, Switch, Button, Divider, notification, DatePicker, InputNumber, Space } from 'antd';
+import { Form, Input, Switch, Button, Divider, notification, DatePicker, InputNumber, Space, Tooltip } from 'antd';
 import QuestionEditor from './QuestionEditor';
 import moment from 'moment-timezone';
 
@@ -29,16 +29,12 @@ const PublisherSurveyEditor = () => {
     }
   }, [id]);
 
-  const onFinish = async (values, saveAsTemplate = false) => {
+  const onFinish = async (values) => {
     values.questions = questions;
 
     // Add userId: 1 for new surveys
     if (id === 'new') {
       values.userId = 1;
-    }
-
-    if (saveAsTemplate) {
-      values.isTemplate = true;
     }
 
     // Filter out null values for startTime and endTime
@@ -54,8 +50,8 @@ const PublisherSurveyEditor = () => {
       body: JSON.stringify(filteredValues),
     };
 
-    const successMessage = `Survey ${saveAsTemplate ? 'template' : ''} saved successfully!`;
-    const errorMessage = `Error saving survey ${saveAsTemplate ? 'template' : ''}.`;
+    const successMessage = `Survey saved successfully!`;
+    const errorMessage = `Error saving survey.`;
 
     try {
       const response = await fetch(
@@ -66,7 +62,11 @@ const PublisherSurveyEditor = () => {
       );
 
       if (response.ok) {
-        notification.success({ message: successMessage });
+        if (values.isTemplate) {
+          history.push('/publisher/templates');
+        } else {
+          history.push('/publisher/surveys');
+        }
       } else {
         notification.error({ message: errorMessage });
       }
@@ -93,16 +93,11 @@ const PublisherSurveyEditor = () => {
     history.goBack();
   };
 
-  const onSaveAsTemplate = async () => {
-    const values = await form.validateFields();
-    onFinish(values, true);
-  };
-
-
   return (
     <div>
       {survey && (
         <Form
+          form={form}
           initialValues={{
             ...survey,
             startTime: survey.startTime ? moment(survey.startTime) : null,
@@ -126,6 +121,14 @@ const PublisherSurveyEditor = () => {
             rules={[{ required: true, message: 'Please input a description!' }]}
           >
             <Input.TextArea placeholder="Enter survey description" />
+          </Form.Item>
+          <Form.Item
+            label="Is Template"
+            name="isTemplate"
+            valuePropName="checked"
+            initialValue={false}
+          >
+            <Switch />
           </Form.Item>
           <Form.Item
             label="Allow anonymous reply"
@@ -166,7 +169,6 @@ const PublisherSurveyEditor = () => {
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-              <Button onClick={onSaveAsTemplate}>Save As Public Template</Button>
               <Button onClick={handleClose}>Close</Button>
             </Space>
           </Form.Item>
