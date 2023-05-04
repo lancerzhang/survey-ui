@@ -29,12 +29,16 @@ const PublisherSurveyEditor = () => {
     }
   }, [id]);
 
-  const onFinish = async (values) => {
+  const onFinish = async (values, saveAsTemplate = false) => {
     values.questions = questions;
 
     // Add userId: 1 for new surveys
     if (id === 'new') {
       values.userId = 1;
+    }
+
+    if (saveAsTemplate) {
+      values.isTemplate = true;
     }
 
     // Filter out null values for startTime and endTime
@@ -50,6 +54,9 @@ const PublisherSurveyEditor = () => {
       body: JSON.stringify(filteredValues),
     };
 
+    const successMessage = `Survey ${saveAsTemplate ? 'template' : ''} saved successfully!`;
+    const errorMessage = `Error saving survey ${saveAsTemplate ? 'template' : ''}.`;
+
     try {
       const response = await fetch(
         id === 'new'
@@ -59,12 +66,12 @@ const PublisherSurveyEditor = () => {
       );
 
       if (response.ok) {
-        notification.success({ message: 'Survey saved successfully!' });
+        notification.success({ message: successMessage });
       } else {
-        notification.error({ message: 'Error saving survey.' });
+        notification.error({ message: errorMessage });
       }
     } catch (error) {
-      notification.error({ message: 'Error saving survey.' });
+      notification.error({ message: errorMessage });
     }
   };
 
@@ -85,6 +92,12 @@ const PublisherSurveyEditor = () => {
   const handleClose = () => {
     history.goBack();
   };
+
+  const onSaveAsTemplate = async () => {
+    const values = await form.validateFields();
+    onFinish(values, true);
+  };
+
 
   return (
     <div>
@@ -153,6 +166,7 @@ const PublisherSurveyEditor = () => {
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
+              <Button onClick={onSaveAsTemplate}>Save As Public Template</Button>
               <Button onClick={handleClose}>Close</Button>
             </Space>
           </Form.Item>

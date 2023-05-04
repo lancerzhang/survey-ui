@@ -9,9 +9,9 @@ const { Header, Content, Footer } = Layout;
 
 
 const LayoutWrapper = ({ children }) => {
-  const history = useHistory();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
+  const history = useHistory();
   const handleClick = (path) => {
     history.push(path);
   };
@@ -24,15 +24,17 @@ const LayoutWrapper = ({ children }) => {
   );
 
   const navMenu = (
-    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
-      {/* Publisher links */}
-      <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
-      <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>
-      <Menu.Item key="3" onClick={() => handleClick('/publisher/templates')}>Templates</Menu.Item>
-      <Menu.Item key="4" onClick={() => handleClick('/publisher/delegates')}>Delegates</Menu.Item>
-      {/* Participant links */}
-      <Menu.Item key="5" onClick={() => handleClick('/participant/replies')}>My Replies</Menu.Item>
-    </Menu>
+    <div style={{ minWidth: '600px' }}>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+        {/* Publisher links */}
+        <Menu.Item key="1" onClick={() => handleClick('/publisher/surveys')}>Surveys</Menu.Item>
+        <Menu.Item key="2" onClick={() => handleClick('/publisher/survey-editor/new')}>Create Survey</Menu.Item>
+        <Menu.Item key="3" onClick={() => handleClick('/publisher/templates')}>Public Templates</Menu.Item>
+        <Menu.Item key="4" onClick={() => handleClick('/publisher/delegates')}>Delegates</Menu.Item>
+        {/* Participant links */}
+        <Menu.Item key="5" onClick={() => handleClick('/participant/replies')}>My Replies</Menu.Item>
+      </Menu>
+    </div>
   );
 
   return (
