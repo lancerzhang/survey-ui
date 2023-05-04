@@ -13,10 +13,15 @@ const ParticipantReplyEditor = () => {
     const history = useHistory();
 
     useEffect(() => {
-        const loadSurvey = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`${serverDomain}/api/surveys/${id}`);
-                const data = await response.json();
+                const userId = 1;
+                const [surveyResponse, surveyReplyResponse] = await Promise.all([
+                    fetch(`${serverDomain}/api/surveys/${id}`),
+                    fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`),
+                ]);
+
+                const data = await surveyResponse.json();
                 const now = moment();
 
                 if (data.startTime && now.isBefore(data.startTime)) {
@@ -32,32 +37,24 @@ const ParticipantReplyEditor = () => {
                 }
 
                 setSurvey(data);
+
+                if (surveyReplyResponse.status !== 404) {
+                    const replyData = await surveyReplyResponse.json();
+                    if (replyData) {
+                        setSurveyReply(replyData);
+                        setQuestionReplies(replyData.questionReplies);
+                    }
+                }
+
             } catch (error) {
-                message.error('Failed to load the survey.');
+                message.error('Failed to load the survey and survey reply data.');
                 history.push('/');
             } finally {
                 setLoading(false);
             }
         };
 
-        const loadSurveyReply = async () => {
-            try {
-                const userId = 1;
-                const replyResponse = await fetch(
-                    `${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`
-                );
-                const replyData = await replyResponse.json();
-                if (replyData) {
-                    setSurveyReply(replyData);
-                }
-                setQuestionReplies(replyData.questionReplies);
-            } catch (error) {
-                console.error('Failed to load the survey reply:', error);
-            }
-        };
-
-        loadSurvey();
-        loadSurveyReply();
+        fetchData();
     }, [id, history]);
 
     const onFinish = async (values) => {
@@ -65,9 +62,15 @@ const ParticipantReplyEditor = () => {
         const surveyId = parseInt(id);
 
         const questionReplies = survey.questions.map((question, questionIndex) => {
+            const existingQuestionReply = surveyReply && surveyReply.questionReplies.find((qr) => qr.questionId === question.id);
+
             const questionReply = {
                 questionId: question.id,
             };
+
+            if (existingQuestionReply) {
+                questionReply.id = existingQuestionReply.id;
+            }
 
             if (question.questionType === 'TEXT') {
                 questionReply.replyText = values[`question_${questionIndex}`];
@@ -76,17 +79,26 @@ const ParticipantReplyEditor = () => {
                     (option) => option.optionText === values[`question_${questionIndex}`]
                 );
 
-                questionReply.optionReplies = [
-                    {
-                        optionId: selectedOption.id,
-                        selected: true,
-                    },
-                ];
-            } else if (question.questionType === 'CHECKBOX') {
-                questionReply.optionReplies = question.options.map((option) => ({
-                    optionId: option.id,
-                    selected: values[`question_${questionIndex}`].includes(option.optionText),
-                }));
+                questionReply.optionReplies = question.options.map((option) => {
+                    const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
+
+                    return {
+                        id: existingOptionReply?.id,
+                        optionId: option.id,
+                        selected: option.id === selectedOption.id,
+                    };
+                });
+            }
+            else if (question.questionType === 'CHECKBOX') {
+                questionReply.optionReplies = question.options.map((option) => {
+                    const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
+
+                    return {
+                        id: existingOptionReply?.id,
+                        optionId: option.id,
+                        selected: values[`question_${questionIndex}`].includes(option.optionText),
+                    };
+                });
             }
 
             return questionReply;
