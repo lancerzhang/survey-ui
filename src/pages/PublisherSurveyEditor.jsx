@@ -1,6 +1,8 @@
 import { Button, DatePicker, Divider, Form, Input, InputNumber, Space, Switch, notification } from 'antd';
 import moment from 'moment-timezone';
 import React, { useEffect, useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import the styles
 import { useHistory, useParams } from 'react-router-dom';
 import QuestionEditor from '../components/QuestionEditor';
 
@@ -93,6 +95,15 @@ const PublisherSurveyEditor = () => {
     history.goBack();
   };
 
+  const quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image']
+    ]
+  };
+
   return (
     <div>
       {survey && (
@@ -120,7 +131,7 @@ const PublisherSurveyEditor = () => {
             name="description"
             rules={[{ required: true, message: 'Please input a description!' }]}
           >
-            <Input.TextArea placeholder="Enter survey description" />
+            <ReactQuill placeholder="Enter survey description" modules={quillModules} />
           </Form.Item>
           <Form.Item
             label="Is Template"

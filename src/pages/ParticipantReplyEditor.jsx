@@ -2,6 +2,7 @@ import { Alert, Button, Checkbox, Form, Input, Radio, Typography, notification }
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import QuillContent from '../components/QuillContent';
 
 const ParticipantReplyEditor = () => {
     const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
@@ -33,6 +34,10 @@ const ParticipantReplyEditor = () => {
     const checkMaxReplies = async (data) => {
         if (!data.maxReplies) {
             return true;
+        }
+        if (data.isTemplate) {
+            setErrorMessage('The survey is a template and cannot be replied to.');
+            return false;
         }
 
         const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
@@ -188,7 +193,7 @@ const ParticipantReplyEditor = () => {
                 />
             )}
             <Typography.Title>{survey.title}</Typography.Title>
-            <Typography.Paragraph>{survey.description}</Typography.Paragraph>
+            <Typography.Paragraph><QuillContent>{survey.description}</QuillContent></Typography.Paragraph>
             {showForm ? (
                 <Form onFinish={onFinish}>
                     {survey.questions.map((question, questionIndex) => {
