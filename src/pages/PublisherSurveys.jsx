@@ -1,7 +1,7 @@
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, message, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, message, Modal } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import PublisherList from './PublisherList';
 
 const { confirm } = Modal;
@@ -106,10 +106,14 @@ const PublisherSurveys = () => {
     <Button onClick={(e) => handleDeleteClick(e, survey.id, handleRefresh)}>Delete</Button>,
   ];
 
+  const onItemClick = (itemId) => {
+    history.push(`/publisher/survey-editor/${itemId}`);
+  };
+
   return (
     <PublisherList
       fetchDataUrl={fetchDataUrl}
-      onItemClick={handleEditClick}
+      onItemClick={onItemClick}
       renderItemActions={renderItemActions}
       refresh={refresh}
     />

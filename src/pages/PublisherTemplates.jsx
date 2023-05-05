@@ -1,6 +1,6 @@
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import { List, Avatar, Pagination, Button, Space, message, Modal } from 'antd';
-import { UserOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import PublisherList from './PublisherList';
 
@@ -54,12 +54,14 @@ const PublisherTemplates = () => {
     <Button onClick={(e) => handleDeleteClick(e, template.id)}>Delete</Button>,
   ];
 
-  // handleEditClick, handleCloneClick, handleDeleteClick functions go here
+  const onItemClick = (itemId) => {
+    history.push(`/publisher/survey-editor/${itemId}`);
+  };
 
   return (
     <PublisherList
       fetchDataUrl={fetchDataUrl}
-      onItemClick={handleEditClick}
+      onItemClick={onItemClick}
       renderItemActions={renderItemActions}
       refresh={refresh}
     />

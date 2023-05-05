@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { List, Pagination, message, Modal } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { List, Pagination } from 'antd';
 import moment from 'moment-timezone';
-
-const { confirm } = Modal;
+import React, { useEffect, useState } from 'react';
 
 const PublisherList = ({
     fetchDataUrl,
     onItemClick,
-    renderItemActions,
+    renderItemActions = () => [],
     refresh,
     pageNumber = 0,
     pageSize = 10,
