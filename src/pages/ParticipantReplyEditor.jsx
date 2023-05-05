@@ -1,61 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { Typography, Form, Input, Radio, Checkbox, Button, Space, Row, notification, message } from 'antd';
+import { Alert, Button, Checkbox, Form, Input, Radio, Typography, notification } from 'antd';
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 const ParticipantReplyEditor = () => {
     const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
     const [survey, setSurvey] = useState(null);
     const [surveyReply, setSurveyReply] = useState(null);
-    const [questionReplies, setQuestionReplies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showForm, setShowForm] = useState(true);
+    const [editForm, setEditForm] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
     const { id } = useParams();
     const history = useHistory();
+
+    const validateDate = (data) => {
+        const now = moment();
+
+        if (data.startTime && now.isBefore(data.startTime)) {
+            setErrorMessage('The survey has not started yet.');
+            return false;
+        }
+
+        if (data.endTime && now.isAfter(data.endTime)) {
+            setErrorMessage('The survey has ended.');
+            return false;
+        }
+
+        return true;
+    };
+
+    const checkMaxReplies = async (data) => {
+        if (!data.maxReplies) {
+            return true;
+        }
+
+        const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
+        const replyCount = await response.json();
+
+        if (replyCount >= data.maxReplies) {
+            setErrorMessage('The survey has reached the maximum number of replies.');
+            return false;
+        }
+
+        return true;
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const userId = 1;
-                const [surveyResponse, surveyReplyResponse] = await Promise.all([
-                    fetch(`${serverDomain}/api/surveys/${id}`),
-                    fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`),
-                ]);
+                const surveyResponse = await fetch(`${serverDomain}/api/surveys/${id}`);
+                const surveyData = await surveyResponse.json();
+                setSurvey(surveyData);
 
-                const data = await surveyResponse.json();
-                const now = moment();
-
-                if (data.startTime && now.isBefore(data.startTime)) {
-                    message.error('The survey has not started yet.');
-                    history.push('/');
-                    return;
-                }
-
-                if (data.endTime && now.isAfter(data.endTime)) {
-                    message.error('The survey has ended.');
-                    history.push('/');
-                    return;
-                }
-
-                setSurvey(data);
-
+                const surveyReplyResponse = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`);
                 if (surveyReplyResponse.status !== 404) {
                     const replyData = await surveyReplyResponse.json();
                     if (replyData) {
                         setSurveyReply(replyData);
-                        setQuestionReplies(replyData.questionReplies);
                     }
+                    setShowForm(true);
+                    const validationResult = validateDate(surveyData) && surveyData.allowResubmit;
+                    setEditForm(validationResult)
+                } else {
+                    const validationResult = validateDate(surveyData) && (await checkMaxReplies(surveyData));
+                    setShowForm(validationResult);
                 }
 
             } catch (error) {
-                message.error('Failed to load the survey and survey reply data.');
-                history.push('/');
+                setErrorMessage('Failed to load the survey and survey reply data.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [id, history]);
+    }, [id]);
 
     const onFinish = async (values) => {
         const userId = 1;
@@ -139,6 +160,14 @@ const ParticipantReplyEditor = () => {
     };
 
 
+    const isEditable = () => {
+        if (!surveyReply) {
+            return true;
+        }
+        return survey.allowResubmit && validateDate(survey);
+    };
+
+    const isFormDisabled = !isEditable();
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -149,93 +178,104 @@ const ParticipantReplyEditor = () => {
 
     return (
         <div>
+            {errorMessage && (
+                <Alert
+                    message="Error"
+                    description={errorMessage}
+                    type="error"
+                    showIcon
+                    style={{ marginBottom: '1rem' }}
+                />
+            )}
             <Typography.Title>{survey.title}</Typography.Title>
-            <Form onFinish={onFinish}>
-                {survey.questions.map((question, questionIndex) => {
-                    const questionReply = questionReplies.find((qr) => qr.questionId === question.id);
+            <Typography.Paragraph>{survey.description}</Typography.Paragraph>
+            {showForm ? (
+                <Form onFinish={onFinish}>
+                    {survey.questions.map((question, questionIndex) => {
+                        const questionReply = surveyReply ? surveyReply.questionReplies.find((qr) => qr.questionId === question.id) : '';
 
-                    return (
-                        <React.Fragment key={questionIndex}>
-                            <Typography.Title level={4}>
-                                Q{questionIndex + 1}. {question.questionText}
-                            </Typography.Title>
-                            {question.questionType === 'TEXT' && (
-                                <Form.Item
-                                    name={`question_${questionIndex}`}
-                                    initialValue={questionReply ? questionReply.replyText : ''}
-                                    rules={[
-                                        { required: true, message: 'Please input a question.' },
-                                    ]}
-                                >
-                                    <Input placeholder="Type your answer here" />
-                                </Form.Item>
-                            )}
-                            {question.questionType === 'RADIO' && (
-                                <Form.Item
-                                    name={`question_${questionIndex}`}
-                                    initialValue={
-                                        questionReply
-                                            ? question.options.find(
-                                                (option) =>
-                                                    questionReply.optionReplies.find(
-                                                        (or) => or.optionId === option.id && or.selected
+                        return (
+                            <React.Fragment key={questionIndex}>
+                                <Typography.Title level={4}>
+                                    Q{questionIndex + 1}. {question.questionText}
+                                </Typography.Title>
+                                {question.questionType === 'TEXT' && (
+                                    <Form.Item
+                                        name={`question_${questionIndex}`}
+                                        initialValue={questionReply ? questionReply.replyText : ''}
+                                        rules={[
+                                            { required: true, message: 'Please input a question.' },
+                                        ]}
+                                    >
+                                        <Input placeholder="Type your answer here" disabled={!editForm} />
+                                    </Form.Item>
+                                )}
+                                {question.questionType === 'RADIO' && (
+                                    <Form.Item
+                                        name={`question_${questionIndex}`}
+                                        initialValue={
+                                            questionReply
+                                                ? question.options.find(
+                                                    (option) =>
+                                                        questionReply.optionReplies.find(
+                                                            (or) => or.optionId === option.id && or.selected
+                                                        )
+                                                ).optionText
+                                                : null
+                                        }
+                                        rules={[
+                                            { required: true, message: 'Please select an option.' },
+                                        ]}
+                                    >
+                                        <Radio.Group disabled={!editForm}>
+                                            {question.options.map((option, optionIndex) => (
+                                                <Radio key={optionIndex} value={option.optionText}>
+                                                    {option.optionText}
+                                                </Radio>
+                                            ))}
+                                        </Radio.Group>
+                                    </Form.Item>
+                                )}
+                                {question.questionType === 'CHECKBOX' && (
+                                    <Form.Item
+                                        name={`question_${questionIndex}`}
+                                        initialValue={
+                                            questionReply
+                                                ? question.options
+                                                    .filter((option) =>
+                                                        questionReply.optionReplies.find(
+                                                            (or) => or.optionId === option.id && or.selected
+                                                        )
                                                     )
-                                            ).optionText
-                                            : null
-                                    }
-                                    rules={[
-                                        { required: true, message: 'Please select an option.' },
-                                    ]}
-                                >
-                                    <Radio.Group>
-                                        {question.options.map((option, optionIndex) => (
-                                            <Radio key={optionIndex} value={option.optionText}>
-                                                {option.optionText}
-                                            </Radio>
-                                        ))}
-                                    </Radio.Group>
-                                </Form.Item>
-                            )}
-                            {question.questionType === 'CHECKBOX' && (
-                                <Form.Item
-                                    name={`question_${questionIndex}`}
-                                    initialValue={
-                                        questionReply
-                                            ? question.options
-                                                .filter((option) =>
-                                                    questionReply.optionReplies.find(
-                                                        (or) => or.optionId === option.id && or.selected
-                                                    )
-                                                )
-                                                .map((option) => option.optionText)
-                                            : []
-                                    }
-                                    rules={[
-                                        { required: true, message: 'Please select an option.' },
-                                    ]}
-                                >
-                                    <Checkbox.Group>
-                                        {question.options.map((option, optionIndex) => (
-                                            <Checkbox key={optionIndex} value={option.optionText}>
-                                                {option.optionText}
-                                            </Checkbox>
-                                        ))}
-                                    </Checkbox.Group>
-                                </Form.Item>
-                            )}
-                        </React.Fragment>
-                    );
-                })}
+                                                    .map((option) => option.optionText)
+                                                : []
+                                        }
+                                        rules={[
+                                            { required: true, message: 'Please select an option.' },
+                                        ]}
+                                    >
+                                        <Checkbox.Group disabled={!editForm}>
+                                            {question.options.map((option, optionIndex) => (
+                                                <Checkbox key={optionIndex} value={option.optionText}>
+                                                    {option.optionText}
+                                                </Checkbox>
+                                            ))}
+                                        </Checkbox.Group>
+                                    </Form.Item>
+                                )}
+                            </React.Fragment>
+                        );
+                    })}
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item>
-            </Form>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" disabled={!editForm}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            ) : null}
         </div>
     );
 };
 
 export default ParticipantReplyEditor;
-

@@ -2,7 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, message, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import PublisherList from './PublisherList';
+import PublisherList from '../components/SurveyList';
 
 const { confirm } = Modal;
 

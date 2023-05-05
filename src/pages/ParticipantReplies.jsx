@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import PublisherList from './PublisherList'; // Import the PublisherList component
+import PublisherList from '../components/SurveyList'; // Import the PublisherList component
 
 const ParticipantReplies = () => {
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;

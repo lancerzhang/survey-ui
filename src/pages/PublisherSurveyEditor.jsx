@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { Form, Input, Switch, Button, Divider, notification, DatePicker, InputNumber, Space, Tooltip } from 'antd';
-import QuestionEditor from './QuestionEditor';
+import { Button, DatePicker, Divider, Form, Input, InputNumber, Space, Switch, notification } from 'antd';
 import moment from 'moment-timezone';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import QuestionEditor from '../components/QuestionEditor';
 
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
