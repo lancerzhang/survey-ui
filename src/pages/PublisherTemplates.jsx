@@ -22,6 +22,11 @@ const PublisherTemplates = () => {
     history.push(`/publisher/survey-editor/${surveyId}`);
   };
 
+  const handleUseClick = (e, surveyId) => {
+    e.stopPropagation();
+    history.push(`/publisher/survey-editor/new?templateId=${surveyId}`);
+  };
+
   const handleDeleteClick = async (e, surveyId) => {
     e.stopPropagation();
 
@@ -52,6 +57,7 @@ const PublisherTemplates = () => {
   const renderItemActions = (template) => [
     <Button onClick={(e) => handleEditClick(e, template.id)}>Edit</Button>,
     <Button onClick={(e) => handleDeleteClick(e, template.id)}>Delete</Button>,
+    <Button onClick={(e) => handleUseClick(e, template.id)}>Use</Button>,
   ];
 
   const onItemClick = (itemId) => {

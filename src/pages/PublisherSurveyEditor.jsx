@@ -3,14 +3,18 @@ import moment from 'moment-timezone';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import QuestionEditor from '../components/QuestionEditor';
+import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
   const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const templateId = queryParams.get('templateId');
 
   const handleQuestionsChange = (updatedQuestions) => {
     setQuestions(updatedQuestions);
@@ -18,18 +22,29 @@ const PublisherSurveyEditor = () => {
 
   useEffect(() => {
     const fetchSurvey = async () => {
-      const response = await fetch(`${serverDomain}/api/surveys/${id}`);
+      const response = await fetch(`${serverDomain}/api/surveys/${templateId ? templateId : id}`);
       const data = await response.json();
-      setSurvey(data);
-      setQuestions(data.questions);
+
+      let modifiedData = data;
+
+      if (templateId) {
+        // Remove all id fields in the survey, questions, and options
+        modifiedData = removeIdsFromSurvey(data);
+        modifiedData.isTemplate = false;
+      }
+
+      setSurvey(modifiedData);
+      setQuestions(modifiedData.questions);
     };
-    if (id === 'new') {
+
+    if (id === 'new' && !templateId) {
       // Initialize a new survey
       setSurvey({});
     } else {
       fetchSurvey();
     }
-  }, [id]);
+  }, [id, templateId]);
+
 
   const onFinish = async (values) => {
     values.questions = questions;

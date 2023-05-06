@@ -3,6 +3,7 @@ import { Button, message, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
+import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
 const { confirm } = Modal;
 
@@ -34,14 +35,9 @@ const PublisherSurveys = () => {
     e.stopPropagation();
     const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`);
     const surveyToClone = await response.json();
-    const clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
+    let clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
 
-    // Remove 'id' attribute from clonedSurvey, its questions, and options
-    delete clonedSurvey.id;
-    clonedSurvey.questions.forEach((question) => {
-      delete question.id;
-      question.options.forEach((option) => delete option.id);
-    });
+    clonedSurvey = removeIdsFromSurvey(clonedSurvey);
 
     // Add '(clone)' to clonedSurvey title
     clonedSurvey.title = `${clonedSurvey.title} (clone)`;
