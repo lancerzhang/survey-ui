@@ -95,13 +95,51 @@ const PublisherSurveyEditor = () => {
     history.goBack();
   };
 
+
+  const imageHandler = async function () {
+    const input = document.createElement("input");
+
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      const formData = new FormData();
+
+      formData.append("image", file);
+
+      // Adjust the URL to match your API endpoint
+      const response = await fetch(`${serverDomain}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const filename = await response.text();
+        // Adjust the URL to match your API endpoint
+        const imageUrl = `${serverDomain}/api/image/${filename}`;
+
+        // Insert the image in the editor
+        const range = this.quill.getSelection();
+        this.quill.insertEmbed(range.index, "image", imageUrl);
+      } else {
+        console.error("Failed to upload image");
+      }
+    };
+  };
+
   const quillModules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image']
-    ]
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['link', 'image']],
+      handlers: {
+        image: imageHandler,
+      },
+    }
   };
 
   return (
