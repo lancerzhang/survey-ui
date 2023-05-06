@@ -187,7 +187,7 @@ const PublisherSurveyEditor = () => {
             <ReactQuill placeholder="Enter survey description" modules={quillModules} />
           </Form.Item>
           <Form.Item
-            label="Is Template"
+            label="Is survey template"
             name="isTemplate"
             valuePropName="checked"
             initialValue={false}
@@ -195,9 +195,10 @@ const PublisherSurveyEditor = () => {
             <Switch />
           </Form.Item>
           <Form.Item
-            label="Allow anonymous reply"
-            name="allowAnonymousReply"
+            label="Is anonymous survey"
+            name="isAnonymous"
             valuePropName="checked"
+            initialValue={false}
           >
             <Switch />
           </Form.Item>
