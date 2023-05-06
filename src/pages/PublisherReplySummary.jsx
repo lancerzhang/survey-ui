@@ -26,7 +26,7 @@ const PublisherReplySummary = () => {
   if (summary.totalReplies === 0) {
     return (
       <div>
-        <Title level={3}>{summary.title}</Title>
+        <Title level={3}>{summary.surveyTitle}</Title>
         <Divider />
         <p>No replies received.</p>
       </div>
@@ -57,7 +57,7 @@ const PublisherReplySummary = () => {
 
   return (
     <div>
-      <Title level={3}>{summary.title}</Title>
+      <Title level={3}>{summary.surveyTitle}</Title>
       <Button onClick={handleDownloadCsv} style={{ marginBottom: '1rem' }}>
         Download CSV
       </Button>
