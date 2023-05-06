@@ -55,11 +55,15 @@ const ParticipantReplyEditor = () => {
         const fetchData = async () => {
             try {
                 const userId = 1;
-                const surveyResponse = await fetch(`${serverDomain}/api/surveys/${id}`);
+
+                const [surveyResponse, surveyReplyResponse] = await Promise.all([
+                    fetch(`${serverDomain}/api/surveys/${id}`),
+                    fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`),
+                ]);
+
                 const surveyData = await surveyResponse.json();
                 setSurvey(surveyData);
 
-                const surveyReplyResponse = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`);
                 if (surveyReplyResponse.status !== 404) {
                     const replyData = await surveyReplyResponse.json();
                     if (replyData) {

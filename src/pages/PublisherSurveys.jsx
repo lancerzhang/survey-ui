@@ -24,6 +24,11 @@ const PublisherSurveys = () => {
     history.push(`/publisher/survey-editor/${surveyId}`);
   };
 
+  const handleResultClick = (e, surveyId) => {
+    e.stopPropagation();
+    history.push(`/publisher/survey/${surveyId}/summary`);
+  };
+
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
     const shareUrl = `${uiDomain}/participant/reply-editor/${surveyId}`;
@@ -98,6 +103,7 @@ const PublisherSurveys = () => {
   const renderItemActions = (survey) => [
     <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
     <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
+    <Button onClick={(e) => handleResultClick(e, survey.id)}>Result</Button>,
     <Button onClick={(e) => handleCloneClick(e, survey.id, handleRefresh)}>Clone</Button>,
     <Button onClick={(e) => handleDeleteClick(e, survey.id, handleRefresh)}>Delete</Button>,
   ];
