@@ -1,9 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Input, Radio, Checkbox, Button, Space, Row, Col, Tooltip, Divider, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Col, Divider, Form, Input, Modal, Radio, Row, Space, Tooltip } from "antd";
 import "antd/dist/antd.css";
-
+import React, { useEffect, useState } from "react";
+const { TextArea } = Input;
 const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }) => {
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [pastedOptions, setPastedOptions] = useState('');
+	const [activeQuestionIndex, setActiveQuestionIndex] = useState(null);
+
+	const showPasteOptionsModal = (questionIndex) => {
+		setActiveQuestionIndex(questionIndex);
+		setIsModalVisible(true);
+	};
+
+	const handleAddPastedOptions = (questionIndex, pastedOptions) => {
+		const newOptions = pastedOptions.split('\n');
+		setState((prevState) => {
+			const questions = prevState.questions.map((question, idx) => {
+				if (idx === questionIndex) {
+					return {
+						...question,
+						options: [...question.options, ...newOptions.map((opt) => ({ optionText: opt }))],
+					};
+				}
+				return question;
+			});
+
+			onQuestionsChange(questions);
+			return { ...prevState, questions };
+		});
+		setIsModalVisible(false);
+	};
 
 	console.log(initialQuestions)
 	const [state, setState] = useState({
@@ -219,11 +246,20 @@ const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }
 												</Radio>
 											))}
 										</Radio.Group>
+									</div>
+									<div>
 										<Button
 											onClick={() => addOption(questionIndex)}
 											type="primary"
 										>
 											Add Option
+										</Button>
+										<Button
+											onClick={() => showPasteOptionsModal(questionIndex)}
+											type="secondary"
+											style={{ marginLeft: '8px' }}
+										>
+											Paste Options
 										</Button>
 									</div>
 								</>
@@ -269,11 +305,20 @@ const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }
 												</Checkbox>
 											))}
 										</Checkbox.Group>
+									</div>
+									<div>
 										<Button
 											onClick={() => addOption(questionIndex)}
 											type="primary"
 										>
 											Add Option
+										</Button>
+										<Button
+											onClick={() => showPasteOptionsModal(questionIndex)}
+											type="secondary"
+											style={{ marginLeft: '8px' }}
+										>
+											Paste Options
 										</Button>
 									</div>
 								</>
@@ -285,6 +330,32 @@ const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }
 					return (
 						<React.Fragment key={questionIndex}>
 							{content}
+							<Modal
+								title="Paste Options"
+								visible={isModalVisible}
+								onCancel={() => setIsModalVisible(false)}
+								footer={null}
+								destroyOnClose
+							>
+								<Form layout="vertical">
+									<Form.Item label="Each line is an option">
+										<TextArea
+											placeholder="Each line is an option"
+											autoSize={{ minRows: 5 }}
+											onChange={(e) => setPastedOptions(e.target.value)}
+										/>
+									</Form.Item>
+									<Form.Item>
+										<Button
+											type="primary"
+											onClick={() => handleAddPastedOptions(activeQuestionIndex, pastedOptions)}
+										>
+											Add Options
+										</Button>
+									</Form.Item>
+								</Form>
+							</Modal>
+
 							<Divider />
 						</React.Fragment>
 					);
