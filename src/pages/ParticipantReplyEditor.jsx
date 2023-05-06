@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import QuillContent from '../components/QuillContent';
 
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+
 const ParticipantReplyEditor = () => {
-    const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
     const [survey, setSurvey] = useState(null);
     const [surveyReply, setSurveyReply] = useState(null);
     const [loading, setLoading] = useState(true);

@@ -5,9 +5,9 @@ import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
 
 const { confirm } = Modal;
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const PublisherTemplates = () => {
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const fetchDataUrl = `${serverDomain}/api/surveys?isTemplate=true`;
   const [refresh, setRefresh] = useState(false);
 

@@ -2,8 +2,9 @@ import { Button, Input, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import useDebounce from '../utils/useDebounce';
 
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+
 const PublisherDelegates = () => {
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const [delegates, setDelegates] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchString, setSearchString] = useState('');

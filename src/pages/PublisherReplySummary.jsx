@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const { Title } = Typography;
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const PublisherReplySummary = () => {
   const { id } = useParams();
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const [summary, setSummary] = useState(null);
 
   useEffect(() => {

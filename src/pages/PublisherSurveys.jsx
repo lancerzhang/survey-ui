@@ -6,10 +6,11 @@ import PublisherList from '../components/SurveyList';
 import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
 const { confirm } = Modal;
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+const uiDomain = process.env.REACT_APP_UI_DOMAIN;
 
 const PublisherSurveys = () => {
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
-  const uiDomain = process.env.REACT_APP_UI_DOMAIN;
+
   const userId = 1;
   const fetchDataUrl = `${serverDomain}/api/surveys/user/${userId}?`;
   const history = useHistory();
@@ -27,6 +28,11 @@ const PublisherSurveys = () => {
   const handleResultClick = (e, surveyId) => {
     e.stopPropagation();
     history.push(`/publisher/survey/${surveyId}/summary`);
+  };
+
+  const handlePrizeClick = (e, surveyId) => {
+    e.stopPropagation();
+    history.push(`/publisher/survey/${surveyId}/prizes`);
   };
 
   const handleShareClick = (e, surveyId) => {
@@ -104,6 +110,7 @@ const PublisherSurveys = () => {
     <Button onClick={(e) => handleEditClick(e, survey.id)}>Edit</Button>,
     <Button onClick={(e) => handleShareClick(e, survey.id)}>Share</Button>,
     <Button onClick={(e) => handleResultClick(e, survey.id)}>Result</Button>,
+    <Button onClick={(e) => handlePrizeClick(e, survey.id)}>Prize</Button>,
     <Button onClick={(e) => handleCloneClick(e, survey.id, handleRefresh)}>Clone</Button>,
     <Button onClick={(e) => handleDeleteClick(e, survey.id, handleRefresh)}>Delete</Button>,
   ];

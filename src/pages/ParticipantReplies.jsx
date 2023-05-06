@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
 
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+
 const ParticipantReplies = () => {
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const [refresh, setRefresh] = useState(false);
 
   const history = useHistory();

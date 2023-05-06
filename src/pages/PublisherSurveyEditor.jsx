@@ -7,11 +7,12 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 import QuestionEditor from '../components/QuestionEditor';
 import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
+const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
+
 const PublisherSurveyEditor = () => {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const templateId = queryParams.get('templateId');
