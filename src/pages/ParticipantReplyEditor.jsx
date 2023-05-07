@@ -2,7 +2,7 @@ import { Alert, Button, Checkbox, Form, Input, Radio, Typography, notification }
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import QuillContent from '../components/QuillContent';
+import HtmlContent from '../components/HtmlContent';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
@@ -198,7 +198,7 @@ const ParticipantReplyEditor = () => {
                 />
             )}
             <Typography.Title>{survey.title}</Typography.Title>
-            <Typography.Paragraph><QuillContent>{survey.description}</QuillContent></Typography.Paragraph>
+            <Typography.Paragraph><HtmlContent>{survey.description}</HtmlContent></Typography.Paragraph>
             {showForm ? (
                 <Form onFinish={onFinish}>
                     {survey.questions.map((question, questionIndex) => {

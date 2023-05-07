@@ -1,7 +1,7 @@
 import { List, Pagination } from 'antd';
 import moment from 'moment-timezone';
 import React, { useEffect, useState } from 'react';
-import QuillContent from '../components/QuillContent';
+import HtmlContent from './HtmlContent';
 
 const PublisherList = ({
     fetchDataUrl,
@@ -44,7 +44,7 @@ const PublisherList = ({
                             title={item.title}
                             description={moment(item.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
                         />
-                        <QuillContent>{item.description}</QuillContent>
+                        <HtmlContent>{item.description}</HtmlContent>
                     </List.Item>
                 )}
             />
