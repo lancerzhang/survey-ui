@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { removeIdsFromSurvey } from '../utils/surveyUtils';
+import { removeIdsFromSurvey, removeNewIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
@@ -55,10 +55,11 @@ const SurveyEditor = () => {
             Object.entries(newSurvey).filter(([key, value]) => !(value === null))
         );
 
+        const requestBody = removeNewIdsFromSurvey(filteredValues);
         const requestOptions = {
             method: id === 'new' ? 'POST' : 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(filteredValues),
+            body: JSON.stringify(requestBody),
         };
 
         const successMessage = `Survey saved successfully!`;

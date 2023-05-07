@@ -1,6 +1,7 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Col, Divider, Form, Input, Modal, Radio, Row, Space, Tooltip } from "antd";
 import React, { useState } from "react";
+import { BASE_NUM_NEW_ID } from "../utils/surveyUtils";
 
 const { TextArea } = Input;
 
@@ -9,6 +10,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pastedOptions, setPastedOptions] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
+    const [sequenceNumber, setSequenceNumber] = useState(BASE_NUM_NEW_ID);
 
     const handleAddPastedOptions = (questionIndex) => {
         const newOptions = pastedOptions.split('\n');
@@ -30,13 +32,19 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     };
 
     const addQuestion = (questionType) => {
-        const newQuestions = [...questions, {
-            questionType: questionType,
-            questionText: '',
-            options: questionType === 'TEXT' ? [] : ['', ''],
-        }];
+        const newQuestions = [
+            ...questions,
+            {
+                id: sequenceNumber,
+                questionType: questionType,
+                questionText: '',
+                options: questionType === 'TEXT' ? [] : [{ id: sequenceNumber + 1 }, { id: sequenceNumber + 2 }],
+            },
+        ];
         setQuestions(newQuestions);
+        setSequenceNumber(sequenceNumber + 3);
     };
+
 
     const updateQuestion = (questionIndex, newQuestionText) => {
         const newQuestions = [...questions];
@@ -54,10 +62,12 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     const addOption = (questionIndex) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
-        updatedQuestion.options = [...updatedQuestion.options, { optionText: '' }];
+        updatedQuestion.options = [...updatedQuestion.options, { id: sequenceNumber, optionText: '' }];
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
+        setSequenceNumber(sequenceNumber + 1);
     };
+
 
     const updateOptions = (questionIndex, optionIndex, newOptionText) => {
         const newQuestions = [...questions];
@@ -94,7 +104,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                     <Col span={18}>
                                         <Form.Item
                                             form={form}
-                                            name={`question_${questionIndex}`}
+                                            name={`question_${question.id}`}
                                             rules={[
                                                 { required: true, message: 'Please input a question.' },
                                             ]}
@@ -130,7 +140,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                         <Col span={18}>
                                             <Form.Item
                                                 form={form}
-                                                name={`question_${questionIndex}`}
+                                                name={`question_${question.id}`}
                                                 rules={[
                                                     { required: true, message: 'Please input a question.' },
                                                 ]}
@@ -160,7 +170,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                 <Radio key={optionIndex}>
                                                     <Form.Item
                                                         form={form}
-                                                        name={`question_${questionIndex}_option_${optionIndex}`}
+                                                        name={`option_${option.id}`}
                                                         rules={[
                                                             { required: true, message: 'Please input an option.' },
                                                         ]}
@@ -213,7 +223,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                         <Col span={18}>
                                             <Form.Item
                                                 form={form}
-                                                name={`question_${questionIndex}`}
+                                                name={`question_${question.id}`}
                                                 rules={[
                                                     { required: true, message: 'Please input a question.' },
                                                 ]}
@@ -243,7 +253,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                 <Checkbox key={optionIndex}>
                                                     <Form.Item
                                                         form={form}
-                                                        name={`question_${questionIndex}_option_${optionIndex}`}
+                                                        name={`option_${option.id}`}
                                                         rules={[
                                                             { required: true, message: 'Please input an option.' },
                                                         ]}
@@ -290,7 +300,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                             return null;
                     }
                     return (
-                        <React.Fragment key={questionIndex}>
+                        <React.Fragment key={question.id}>
                             {content}
                             <Divider />
                         </React.Fragment>
