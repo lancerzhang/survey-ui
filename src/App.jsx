@@ -6,9 +6,9 @@ import ParticipantReplyEditor from './pages/ParticipantReplyEditor';
 import PublisherDelegates from './pages/PublisherDelegates';
 import PublisherPrizes from './pages/PublisherPrizes';
 import PublisherReplySummary from './pages/PublisherReplySummary';
-import PublisherSurveyEditor from './pages/PublisherSurveyEditor';
 import PublisherSurveys from './pages/PublisherSurveys';
 import PublisherTemplates from './pages/PublisherTemplates';
+import SurveyEditor from './pages/SurveyEditor';
 
 const App = () => {
     return (
@@ -16,7 +16,7 @@ const App = () => {
             <LayoutWrapper>
                 <Switch>
                     <Route exact path="/" component={PublisherSurveys} />
-                    <Route path="/publisher/survey-editor/:id" component={PublisherSurveyEditor} />
+                    <Route path="/publisher/survey-editor/:id" component={SurveyEditor} />
                     <Route path="/publisher/surveys" component={PublisherSurveys} />
                     <Route path="/publisher/templates" component={PublisherTemplates} />
                     <Route path="/publisher/survey/:id/summary" component={PublisherReplySummary} />
