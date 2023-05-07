@@ -203,7 +203,10 @@ const PublisherSurveyEditor = () => {
           >
             <Switch />
           </Form.Item>
-          <Form.Item label="Allow resubmit" name="allowResubmit" valuePropName="checked">
+          <Form.Item label="Allow resubmit"
+            name="allowResubmit"
+            valuePropName="checked"
+            initialValue={false}>
             <Switch />
           </Form.Item>
           <Form.Item label="Start Time" name="startTime">
