@@ -1,11 +1,12 @@
+import { MenuOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Col, Dropdown, Layout, Menu, Row, Space } from 'antd';
 import React, { useMemo } from 'react';
-import { Layout, Menu, Dropdown, Avatar, Space, Row, Col, Button } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
-import { UserOutlined, MenuOutlined } from '@ant-design/icons';
-import styles from './LayoutWrapper.module.css';
 import useMediaQuery from '../hooks/useMediaQuery';
+import Footer from './Footer';
+import styles from './LayoutWrapper.module.css';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 
 const LayoutWrapper = ({ children }) => {
@@ -77,7 +78,7 @@ const LayoutWrapper = ({ children }) => {
       <Content style={{ padding: '0 50px' }}>
         <div className={styles['site-layout-content']}>{children}</div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Survey-UI ©2023 Created by YourName</Footer>
+      <Footer />
     </Layout>
   );
 };
