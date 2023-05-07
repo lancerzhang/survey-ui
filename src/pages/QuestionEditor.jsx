@@ -5,6 +5,7 @@ import React, { useState } from "react";
 const { TextArea } = Input;
 
 const QuestionEditor = ({ form, questions, setQuestions }) => {
+    console.log("questions", questions)
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pastedOptions, setPastedOptions] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);

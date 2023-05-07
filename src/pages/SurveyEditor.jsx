@@ -35,7 +35,7 @@ const SurveyEditor = () => {
 
         if (id === 'new' && !templateId) {
             // Initialize a new survey
-            setSurvey({});
+            setSurvey({ description: '', questions: [] });
         } else {
             fetchSurvey();
         }
