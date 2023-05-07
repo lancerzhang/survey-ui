@@ -32,7 +32,6 @@ const QuestionEditor = ({ form, questions: initialQuestions, onQuestionsChange }
 		setIsModalVisible(false);
 	};
 
-	console.log(initialQuestions)
 	const [state, setState] = useState({
 		questions: initialQuestions,
 	});

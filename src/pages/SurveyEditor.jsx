@@ -8,15 +8,6 @@ import { removeIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
-const quillModules = {
-    toolbar: [
-        ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
-        ['link', 'image'], // link and image
-    ]
-};
 
 const SurveyEditor = () => {
     const [survey, setSurvey] = useState(null);
@@ -39,7 +30,6 @@ const SurveyEditor = () => {
                 modifiedData = removeIdsFromSurvey(data);
                 modifiedData.isTemplate = false;
             }
-
             setSurvey(modifiedData);
         };
 
@@ -53,18 +43,17 @@ const SurveyEditor = () => {
 
 
     const onFinish = async (values) => {
+        const newSurvey = { ...survey, ...values };
 
         // Add userId: 1 for new surveys
         if (id === 'new') {
-            values.userId = 1;
+            newSurvey.userId = 1;
         }
 
         // Filter out null values for startTime and endTime
         const filteredValues = Object.fromEntries(
-            Object.entries(values).filter(([key, value]) => !(value === null && (key === 'startTime' || key === 'endTime')))
+            Object.entries(newSurvey).filter(([key, value]) => !(value === null))
         );
-
-        console.log('Form values:', filteredValues);
 
         const requestOptions = {
             method: id === 'new' ? 'POST' : 'PUT',
@@ -84,7 +73,7 @@ const SurveyEditor = () => {
             );
 
             if (response.ok) {
-                if (values.isTemplate) {
+                if (filteredValues.isTemplate) {
                     history.push('/publisher/templates');
                 } else {
                     history.push('/publisher/surveys');
@@ -108,19 +97,6 @@ const SurveyEditor = () => {
 
     const handleClose = () => {
         history.goBack();
-    };
-
-    const addQuestion = () => {
-        setSurvey({
-            ...survey,
-            questions: [...survey.questions, { text: '', type: 'text' }]
-        });
-    };
-
-    const updateQuestion = (questionIndex, updatedQuestion) => {
-        const newQuestions = [...survey.questions];
-        newQuestions[questionIndex] = updatedQuestion;
-        setSurvey({ ...survey, questions: newQuestions });
     };
 
     const setQuestions = (questions) => {
@@ -155,11 +131,13 @@ const SurveyEditor = () => {
             const file = input.files[0];
             if (file) {
                 try {
+
                     const imageUrl = await uploadImage(file);
                     const quill = ReactQuill.findDOMNode(this).querySelector('.ql-editor');
                     const range = this.quill.getSelection(true);
                     this.quill.insertEmbed(range.index, 'image', imageUrl);
                     this.quill.setSelection(range.index + 1);
+
                 } catch (error) {
                     console.error('Image upload failed', error);
                 }
@@ -167,6 +145,21 @@ const SurveyEditor = () => {
         };
     };
 
+    const quillModules = {
+        toolbar: {
+            container: [
+                ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
+                ['link', 'image'], // link and image
+            ],
+            // can not input anything with hanlder
+            // handlers: {
+            //     image: customImageHandler,
+            // },
+        }
+    };
 
     return (
         <div>
@@ -180,8 +173,7 @@ const SurveyEditor = () => {
                     }}
                     onFinish={onFinish}
                     labelCol={{ span: 4 }}
-                    wrapperCol={{ span: 14 }}
-                    layout="horizontal"
+                    wrapperCol={{ span: 22 }}
                 >
                     <Form.Item
                         label="Title"
@@ -196,9 +188,6 @@ const SurveyEditor = () => {
                             value={survey.description}
                             modules={quillModules}
                             onChange={(value) => setSurvey({ ...survey, description: value })}
-                            handlers={{
-                                image: customImageHandler
-                            }}
                         />
                     </Form.Item>
                     <Form.Item

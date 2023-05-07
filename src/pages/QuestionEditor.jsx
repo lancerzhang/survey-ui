@@ -7,16 +7,25 @@ const { TextArea } = Input;
 const QuestionEditor = ({ form, questions, setQuestions }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pastedOptions, setPastedOptions] = useState('');
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
 
     const handleAddPastedOptions = (questionIndex) => {
         const newOptions = pastedOptions.split('\n');
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
-        updatedQuestion.options = [...updatedQuestion.options, ...newOptions.map((opt) => ({ optionText: opt }))];
+        updatedQuestion.options = [
+            ...updatedQuestion.options,
+            ...newOptions.map((opt) => ({ optionText: opt })),
+        ];
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
         setPastedOptions('');
         setIsModalVisible(false);
+    };
+
+    const openModalForQuestion = (questionIndex) => {
+        setCurrentQuestionIndex(questionIndex);
+        setIsModalVisible(true);
     };
 
     const addQuestion = (questionType) => {
@@ -37,8 +46,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     };
 
     const removeQuestion = (questionIndex) => {
-        const newQuestions = [...questions];
-        newQuestions.splice(questionIndex, 1);
+        const newQuestions = questions.filter((_, index) => index !== questionIndex);
         setQuestions(newQuestions);
     };
 
@@ -54,7 +62,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
         const updatedOptions = [...updatedQuestion.options];
-        updatedOptions[optionIndex] = { optionText: newOptionText };
+        updatedOptions[optionIndex] = { ...updatedOptions[optionIndex], optionText: newOptionText };
         updatedQuestion.options = updatedOptions;
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
@@ -63,46 +71,10 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     const removeOption = (questionIndex, optionIndex) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
-        const updatedOptions = [...updatedQuestion.options];
-        updatedOptions.splice(optionIndex, 1);
+        const updatedOptions = updatedQuestion.options.filter((_, index) => index !== optionIndex);
         updatedQuestion.options = updatedOptions;
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
-    };
-
-    const QuestionRow = ({ questionIndex, question, updateQuestion, removeQuestion }) => {
-        return (
-            <Row align="top">
-                <Col span={2}>
-                    <span>Q{questionIndex + 1}.</span>
-                </Col>
-                <Col span={18}>
-                    <Form.Item
-                        name={`question_${questionIndex}`}
-                        rules={[
-                            { required: true, message: 'Please input a question.' },
-                        ]}
-                        initialValue={question.questionText}
-                    >
-                        <Input
-                            placeholder="Type your question here."
-                            onChange={(e) =>
-                                updateQuestion(questionIndex, e.target.value)
-                            }
-                        />
-                    </Form.Item>
-                </Col>
-                <Col span={4}>
-                    <Button
-                        onClick={() => removeQuestion(questionIndex)}
-                        type="primary"
-                        danger
-                    >
-                        Remove Question
-                    </Button>
-                </Col>
-            </Row>
-        );
     };
 
     return (
@@ -113,26 +85,74 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                     let content;
                     switch (question.questionType) {
                         case "TEXT":
-                            content = (
-                                <QuestionRow
-                                    key={questionIndex}
-                                    questionIndex={questionIndex}
-                                    question={question}
-                                    updateQuestion={updateQuestion}
-                                    removeQuestion={removeQuestion}
-                                />
-                            );
+                            content = <>
+                                <Row align="top">
+                                    <Col span={2}>
+                                        <span>Q{questionIndex + 1}.</span>
+                                    </Col>
+                                    <Col span={18}>
+                                        <Form.Item
+                                            form={form}
+                                            name={`question_${questionIndex}`}
+                                            rules={[
+                                                { required: true, message: 'Please input a question.' },
+                                            ]}
+                                            initialValue={question.questionText}
+                                        >
+                                            <Input
+                                                placeholder="Type your question here."
+                                                onChange={(e) =>
+                                                    updateQuestion(questionIndex, e.target.value)
+                                                }
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={4}>
+                                        <Button
+                                            onClick={() => removeQuestion(questionIndex)}
+                                            type="primary"
+                                            danger
+                                        >
+                                            Remove Question
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </>
                             break;
                         case "RADIO":
                             content = (
                                 <>
-                                    <QuestionRow
-                                        key={questionIndex}
-                                        questionIndex={questionIndex}
-                                        question={question}
-                                        updateQuestion={updateQuestion}
-                                        removeQuestion={removeQuestion}
-                                    />
+                                    <Row align="top">
+                                        <Col span={2}>
+                                            <span>Q{questionIndex + 1}.</span>
+                                        </Col>
+                                        <Col span={18}>
+                                            <Form.Item
+                                                form={form}
+                                                name={`question_${questionIndex}`}
+                                                rules={[
+                                                    { required: true, message: 'Please input a question.' },
+                                                ]}
+                                                initialValue={question.questionText}
+                                            >
+                                                <Input
+                                                    placeholder="Type your question here."
+                                                    onChange={(e) =>
+                                                        updateQuestion(questionIndex, e.target.value)
+                                                    }
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={4}>
+                                            <Button
+                                                onClick={() => removeQuestion(questionIndex)}
+                                                type="primary"
+                                                danger
+                                            >
+                                                Remove Question
+                                            </Button>
+                                        </Col>
+                                    </Row>
                                     <div>
                                         <Radio.Group>
                                             {question.options.map((option, optionIndex) => (
@@ -172,7 +192,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                             Add Option
                                         </Button>
                                         <Button
-                                            onClick={() => setIsModalVisible(true)}
+                                            onClick={() => openModalForQuestion(questionIndex)}
                                             type="secondary"
                                             style={{ marginLeft: '8px' }}
                                         >
@@ -185,13 +205,37 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                         case "CHECKBOX":
                             content = (
                                 <>
-                                    <QuestionRow
-                                        key={questionIndex}
-                                        questionIndex={questionIndex}
-                                        question={question}
-                                        updateQuestion={updateQuestion}
-                                        removeQuestion={removeQuestion}
-                                    />
+                                    <Row align="top">
+                                        <Col span={2}>
+                                            <span>Q{questionIndex + 1}.</span>
+                                        </Col>
+                                        <Col span={18}>
+                                            <Form.Item
+                                                form={form}
+                                                name={`question_${questionIndex}`}
+                                                rules={[
+                                                    { required: true, message: 'Please input a question.' },
+                                                ]}
+                                                initialValue={question.questionText}
+                                            >
+                                                <Input
+                                                    placeholder="Type your question here."
+                                                    onChange={(e) =>
+                                                        updateQuestion(questionIndex, e.target.value)
+                                                    }
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={4}>
+                                            <Button
+                                                onClick={() => removeQuestion(questionIndex)}
+                                                type="primary"
+                                                danger
+                                            >
+                                                Remove Question
+                                            </Button>
+                                        </Col>
+                                    </Row>
                                     <div>
                                         <Checkbox.Group>
                                             {question.options.map((option, optionIndex) => (
@@ -231,7 +275,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                             Add Option
                                         </Button>
                                         <Button
-                                            onClick={() => setIsModalVisible(true)}
+                                            onClick={() => openModalForQuestion(questionIndex)}
                                             type="secondary"
                                             style={{ marginLeft: '8px' }}
                                         >
@@ -247,31 +291,6 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                     return (
                         <React.Fragment key={questionIndex}>
                             {content}
-                            <Modal
-                                title="Paste Options"
-                                visible={isModalVisible}
-                                onCancel={() => setIsModalVisible(false)}
-                                footer={null}
-                                destroyOnClose
-                            >
-                                <Form layout="vertical">
-                                    <Form.Item label="Each line is an option">
-                                        <TextArea
-                                            placeholder="Each line is an option"
-                                            autoSize={{ minRows: 5 }}
-                                            onChange={(e) => setPastedOptions(e.target.value)}
-                                        />
-                                    </Form.Item>
-                                    <Form.Item>
-                                        <Button
-                                            type="primary"
-                                            onClick={() => handleAddPastedOptions(questionIndex)}
-                                        >
-                                            Add Options
-                                        </Button>
-                                    </Form.Item>
-                                </Form>
-                            </Modal>
                             <Divider />
                         </React.Fragment>
                     );
@@ -288,6 +307,26 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                     Add Checkbox
                 </Button>
             </Space>
+            <Modal
+                title="Paste Options"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={null}
+                destroyOnClose
+            >
+                <TextArea
+                    placeholder="Each line is an option"
+                    autoSize={{ minRows: 5 }}
+                    onChange={(e) => setPastedOptions(e.target.value)}
+                />
+                <Button
+                    style={{ marginTop: "16px" }}
+                    type="primary"
+                    onClick={() => handleAddPastedOptions(currentQuestionIndex)}
+                >
+                    Add Options
+                </Button>
+            </Modal>
         </div>
     );
 };

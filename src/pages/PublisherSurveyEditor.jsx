@@ -60,8 +60,6 @@ const PublisherSurveyEditor = () => {
       Object.entries(values).filter(([key, value]) => !(value === null && (key === 'startTime' || key === 'endTime')))
     );
 
-    console.log('Form values:', filteredValues);
-
     const requestOptions = {
       method: id === 'new' ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },

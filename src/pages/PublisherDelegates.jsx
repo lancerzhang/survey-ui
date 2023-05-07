@@ -40,7 +40,6 @@ const PublisherDelegates = () => {
   };
 
   const addDelegate = async (delegate) => {
-    console.log("delegate", delegate)
     const requestBody = {
       delegatorId: userId,
       delegate: {

@@ -69,7 +69,6 @@ const PublisherReplySummary = () => {
         renderItem={(questionSummary) => (
           <List.Item key={questionSummary.questionId}>
             <List.Item.Meta title={questionSummary.questionText} />
-            {console.log("questionSummary", questionSummary)}
             {questionSummary.questionType === 'TEXT' ? (
               <p>Text responses not shown in summary.</p>
             ) : (

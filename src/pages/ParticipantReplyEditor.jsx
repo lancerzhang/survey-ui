@@ -145,8 +145,6 @@ const ParticipantReplyEditor = () => {
             requestBody.id = surveyReply.id;
         }
 
-        console.log('Request body:', requestBody);
-
         const requestOptions = {
             method: surveyReply ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
