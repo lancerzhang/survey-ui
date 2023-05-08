@@ -41,7 +41,7 @@ const ParticipantReplyEditor = () => {
             return false;
         }
 
-        const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
+        const response = await fetch(`${serverDomain}/survey-replies/surveys/${id}/count`);
         const replyCount = await response.json();
 
         if (replyCount >= data.maxReplies) {
@@ -58,8 +58,8 @@ const ParticipantReplyEditor = () => {
                 const userId = 1;
 
                 const [surveyResponse, surveyReplyResponse] = await Promise.all([
-                    fetch(`${serverDomain}/api/surveys/${id}`),
-                    fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`),
+                    fetch(`${serverDomain}/surveys/${id}`),
+                    fetch(`${serverDomain}/survey-replies/surveys/${id}/user/${userId}`),
                 ]);
 
                 const surveyData = await surveyResponse.json();
@@ -153,7 +153,7 @@ const ParticipantReplyEditor = () => {
 
         try {
             const response = await fetch(
-                `${serverDomain}/api/survey-replies/${surveyReply ? surveyReply.id : ''}`,
+                `${serverDomain}/survey-replies/${surveyReply ? surveyReply.id : ''}`,
                 requestOptions
             );
 

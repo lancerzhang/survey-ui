@@ -12,7 +12,7 @@ const uiDomain = process.env.REACT_APP_UI_DOMAIN;
 const PublisherSurveys = () => {
 
   const userId = 1;
-  const fetchDataUrl = `${serverDomain}/api/surveys/user/${userId}?`;
+  const fetchDataUrl = `${serverDomain}/surveys/user/${userId}?`;
   const history = useHistory();
   const [refresh, setRefresh] = useState(false);
 
@@ -44,7 +44,7 @@ const PublisherSurveys = () => {
 
   const handleCloneClick = async (e, surveyId) => {
     e.stopPropagation();
-    const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`);
+    const response = await fetch(`${serverDomain}/surveys/${surveyId}`);
     const surveyToClone = await response.json();
     let clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
 
@@ -64,7 +64,7 @@ const PublisherSurveys = () => {
         };
 
         try {
-          const response = await fetch(`${serverDomain}/api/surveys`, requestOptions);
+          const response = await fetch(`${serverDomain}/surveys`, requestOptions);
 
           if (response.ok) {
             message.success('Survey was cloned');
@@ -91,7 +91,7 @@ const PublisherSurveys = () => {
         };
 
         try {
-          const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`, requestOptions);
+          const response = await fetch(`${serverDomain}/surveys/${surveyId}`, requestOptions);
 
           if (response.ok) {
             message.success('Survey was deleted');

@@ -11,13 +11,13 @@ const PublisherPrizes = () => {
     const [form] = Form.useForm();
 
     const fetchPrizes = async () => {
-        const response = await fetch(`${serverDomain}/api/prizes?surveyId=${id}`);
+        const response = await fetch(`${serverDomain}/prizes?surveyId=${id}`);
         const data = await response.json();
         setPrizes(data);
     };
 
     const fetchReplyCount = async () => {
-        const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
+        const response = await fetch(`${serverDomain}/survey-replies/surveys/${id}/count`);
         const count = await response.json();
         setReplyCount(count);
     };
@@ -32,7 +32,7 @@ const PublisherPrizes = () => {
     }, []);
 
     const handleSubmit = async (values) => {
-        const response = await fetch(`${serverDomain}/api/prizes`, {
+        const response = await fetch(`${serverDomain}/prizes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

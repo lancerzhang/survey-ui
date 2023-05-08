@@ -14,7 +14,7 @@ const PublisherDelegates = () => {
 
   useEffect(() => {
     const fetchDelegates = async () => {
-      const response = await fetch(`${serverDomain}/api/delegates/delegator/${userId}`);
+      const response = await fetch(`${serverDomain}/delegates/delegator/${userId}`);
       const data = await response.json();
       setDelegates(data);
     };
@@ -31,7 +31,7 @@ const PublisherDelegates = () => {
 
   const handleSearch = async (searchString) => {
     if (debouncedSearchString.length > 2) {
-      const response = await fetch(`${serverDomain}/api/users/search?searchString=${searchString}`);
+      const response = await fetch(`${serverDomain}/users/search?searchString=${searchString}`);
       const data = await response.json();
       setSearchResults(data);
     } else {
@@ -47,7 +47,7 @@ const PublisherDelegates = () => {
       },
     };
 
-    const response = await fetch(`${serverDomain}/api/delegates`, {
+    const response = await fetch(`${serverDomain}/delegates`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const PublisherDelegates = () => {
   };
 
   const removeDelegate = async (delegateId) => {
-    const response = await fetch(`${serverDomain}/api/delegates/${delegateId}`, {
+    const response = await fetch(`${serverDomain}/delegates/${delegateId}`, {
       method: 'DELETE',
     });
 

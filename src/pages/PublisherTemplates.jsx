@@ -8,7 +8,7 @@ const { confirm } = Modal;
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const PublisherTemplates = () => {
-  const fetchDataUrl = `${serverDomain}/api/surveys?isTemplate=true`;
+  const fetchDataUrl = `${serverDomain}/surveys?isTemplate=true`;
   const [refresh, setRefresh] = useState(false);
 
   const handleRefresh = () => {
@@ -39,7 +39,7 @@ const PublisherTemplates = () => {
         };
 
         try {
-          const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`, requestOptions);
+          const response = await fetch(`${serverDomain}/surveys/${surveyId}`, requestOptions);
 
           if (response.ok) {
             message.success('Template was deleted');

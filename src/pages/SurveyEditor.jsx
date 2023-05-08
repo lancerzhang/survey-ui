@@ -20,7 +20,7 @@ const SurveyEditor = () => {
 
     useEffect(() => {
         const fetchSurvey = async () => {
-            const response = await fetch(`${serverDomain}/api/surveys/${templateId ? templateId : id}`);
+            const response = await fetch(`${serverDomain}/surveys/${templateId ? templateId : id}`);
             const data = await response.json();
 
             let modifiedData = data;
@@ -68,8 +68,8 @@ const SurveyEditor = () => {
         try {
             const response = await fetch(
                 id === 'new'
-                    ? `${serverDomain}/api/surveys/`
-                    : `${serverDomain}/api/surveys/${id}`,
+                    ? `${serverDomain}/surveys/`
+                    : `${serverDomain}/surveys/${id}`,
                 requestOptions
             );
 
@@ -108,7 +108,7 @@ const SurveyEditor = () => {
         const formData = new FormData();
         formData.append('image', file);
 
-        const response = await fetch(`${serverDomain}/api/upload`, {
+        const response = await fetch(`${serverDomain}/upload`, {
             method: 'POST',
             body: formData,
         });
@@ -118,7 +118,7 @@ const SurveyEditor = () => {
         }
 
         const filename = await response.text();
-        const imageUrl = `${serverDomain}/api/image/${filename}`;
+        const imageUrl = `${serverDomain}/image/${filename}`;
         return imageUrl;
     };
 

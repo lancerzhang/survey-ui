@@ -14,7 +14,7 @@ const ParticipantReplies = () => {
   };
 
   const userId = 1;
-  const fetchDataUrl = `${serverDomain}/api/surveys/replied/user/${userId}?`;
+  const fetchDataUrl = `${serverDomain}/surveys/replied/user/${userId}?`;
 
   return (
     <div>
