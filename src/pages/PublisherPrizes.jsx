@@ -54,14 +54,14 @@ const PublisherPrizes = () => {
 
     const columns = [
         {
-            title: 'Username',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'Display Name',
+            dataIndex: 'displayName',
+            key: 'displayName',
         },
         {
-            title: 'Staff ID',
-            dataIndex: 'staffId',
-            key: 'staffId',
+            title: 'Employee ID',
+            dataIndex: 'employeeId',
+            key: 'employeeId',
         },
     ];
 
@@ -81,8 +81,8 @@ const PublisherPrizes = () => {
                             columns={columns}
                             dataSource={prize.winners.map((winner) => ({
                                 key: winner.id,
-                                username: winner.user.username,
-                                staffId: winner.user.staffId,
+                                displayName: winner.user.displayName,
+                                employeeId: winner.user.employeeId,
                             }))}
                             pagination={false}
                         />

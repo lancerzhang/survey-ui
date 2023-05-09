@@ -1,18 +1,19 @@
 import React from 'react';
-import useFetchMe from '../useFetchMe';
+import useFetchUsers from '../useFetchUsers';
 
 const Me = () => {
-    const me = useFetchMe();
+    const users = useFetchUsers();
 
-    if (!me) {
+    if (!users) {
         return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <p>Employee ID: {me.employeeId}</p>
-            <p>Display Name: {me.displayName}</p>
-            <p>Email: {me.email}</p>
+            <p>id: {users.user.id}</p>
+            <p>Employee ID: {users.user.employeeId}</p>
+            <p>Display Name: {users.user.displayName} {users.user.id !== users.me.id ? '(delegate)' : ''}</p>
+            <p>Email: {users.user.email}</p>
         </div>
     );
 };

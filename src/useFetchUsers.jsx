@@ -1,18 +1,18 @@
 import { useContext, useEffect } from 'react';
-import UserContext from './UserContext';
+import UsersContext from './UsersContext';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const useFetchMe = () => {
-    const { me, setMe } = useContext(UserContext);
+    const { users, setUsers } = useContext(UsersContext);
 
     useEffect(() => {
-        if (!me) {
+        if (!users) {
             const fetchMe = async () => {
                 try {
                     const response = await fetch(`${serverDomain}/oauth2/me`);
-                    const data = await response.json();
-                    setMe(data);
+                    const meData = await response.json();
+                    setUsers({ me: meData, user: meData });
                 } catch (error) {
                     if (error.response && error.response.status === 401) {
                         window.location.href = `${serverDomain}/oauth2/sso`;
@@ -23,9 +23,9 @@ const useFetchMe = () => {
             };
             fetchMe();
         }
-    }, [me, setMe]);
+    }, [users, setUsers]);
 
-    return me;
+    return users;
 };
 
 export default useFetchMe;

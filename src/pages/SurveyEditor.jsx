@@ -1,15 +1,17 @@
-import { Button, DatePicker, Divider, Form, Input, InputNumber, Space, Switch, notification } from 'antd';
+import { Button, Col, DatePicker, Divider, Form, Input, InputNumber, Row, Space, Switch, notification } from 'antd';
 import moment from 'moment-timezone';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey, removeNewIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const SurveyEditor = () => {
+    const user = useFetchUsers().user;
     const [survey, setSurvey] = useState(null);
     const { id } = useParams();
     const history = useHistory();
@@ -47,7 +49,7 @@ const SurveyEditor = () => {
 
         // Add userId: 1 for new surveys
         if (id === 'new') {
-            newSurvey.userId = 1;
+            newSurvey.userId = user.id;
         }
 
         // Filter out null values for startTime and endTime
@@ -242,14 +244,16 @@ const SurveyEditor = () => {
                         setQuestions={setQuestions}
                     />
                     <Divider />
-                    <Form.Item wrapperCol={{ offset: 4 }}>
-                        <Space>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                            <Button onClick={handleClose}>Close</Button>
-                        </Space>
-                    </Form.Item>
+                    <Row justify="center">
+                        <Col>
+                            <Space>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                                <Button onClick={handleClose}>Close</Button>
+                            </Space>
+                        </Col>
+                    </Row>
                 </Form>
             )}
         </div>

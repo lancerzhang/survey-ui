@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import PrivateRoute from "./PrivateRoute";
-import UserContext from './UserContext';
+import UsersContext from './UsersContext';
 import LayoutWrapper from './components/LayoutWrapper';
 import Me from './pages/Me';
 import ParticipantReplies from './pages/ParticipantReplies';
@@ -16,7 +16,7 @@ import SurveyEditor from './pages/SurveyEditor';
 const App = () => {
     const [me, setMe] = useState(null);
     return (
-        <UserContext.Provider value={{ me, setMe }}>
+        <UsersContext.Provider value={{ users: me, setUsers: setMe }}>
             <Router>
                 <LayoutWrapper>
                     <Switch>
@@ -33,7 +33,7 @@ const App = () => {
                     </Switch>
                 </LayoutWrapper>
             </Router>
-        </UserContext.Provider>
+        </UsersContext.Provider>
     );
 };
 

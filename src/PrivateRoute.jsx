@@ -1,12 +1,12 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import useFetchMe from './useFetchMe';
+import useFetchUsers from './useFetchUsers';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
-    const me = useFetchMe();
+    const users = useFetchUsers();
 
-    if (!me) {
+    if (!users) {
         return <div>Loading...</div>;
     }
 

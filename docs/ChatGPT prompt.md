@@ -7,7 +7,7 @@
 5. There should be a user icon on right of top menu bar, click the icon, will show more menus, e.g. my profile, settinigs. Also, the layout should be responsive, so that adopt different screen size, mobile, iPad, laptop and wide screen monitor.
 6. When change from mobile view to desktop view, the menus are disappear
 7. In PublisherSurveyList I want to call a http url and get list of surveys, and then render on the screen, the response of http is a json like below  ``paste survey list json``
-8. Please use list component and vertical layout with pagination for this survey list, there should be an avatar beside username. The pagaination format is using spring data Page.java, example data json is, ``paste pagination survey list json``
+8. Please use list component and vertical layout with pagination for this survey list, there should be an avatar beside displayName. The pagaination format is using spring data Page.java, example data json is, ``paste pagination survey list json``
 9. When go to page 2, it still highlight page 1, and I can't go back to page 1.
 10. Update the code, when click a survey item, will go to the PublisherSurveyEditor page along with survey.id
 11. When PublisherSurveyEditor is open, call a http url go get survey detail, prefill the edit page with response body, example survey json is, ``paste survey detail json``

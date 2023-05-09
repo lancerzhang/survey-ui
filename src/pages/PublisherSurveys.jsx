@@ -3,6 +3,7 @@ import { Button, message, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
+import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
 const { confirm } = Modal;
@@ -10,9 +11,9 @@ const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 const uiDomain = process.env.REACT_APP_UI_DOMAIN;
 
 const PublisherSurveys = () => {
+  const user = useFetchUsers().user;
 
-  const userId = 1;
-  const fetchDataUrl = `${serverDomain}/surveys/user/${userId}?`;
+  const fetchDataUrl = `${serverDomain}/surveys/user/${user.id}?`;
   const history = useHistory();
   const [refresh, setRefresh] = useState(false);
 
