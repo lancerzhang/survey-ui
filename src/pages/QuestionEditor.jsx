@@ -45,10 +45,10 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     };
 
 
-    const updateQuestion = (questionIndex, newQuestionText) => {
+    const updateQuestion = (questionIndex, fieldName, newFieldValue) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
-        updatedQuestion.questionText = newQuestionText;
+        updatedQuestion[fieldName] = newFieldValue;
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
     };
@@ -103,7 +103,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                     <Col span={18}>
                                         <Form.Item
                                             form={form}
-                                            name={`question_${question.id}`}
+                                            name={`question__${question.id}`}
                                             rules={[
                                                 { required: true, message: 'Please input a question.' },
                                             ]}
@@ -113,7 +113,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                 autoSize={{ minRows: 1 }}
                                                 placeholder="Type your question here."
                                                 onChange={(e) =>
-                                                    updateQuestion(questionIndex, e.target.value)
+                                                    updateQuestion(questionIndex, "questionText", e.target.value)
                                                 }
                                             />
                                         </Form.Item>
@@ -140,7 +140,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                         <Col span={18}>
                                             <Form.Item
                                                 form={form}
-                                                name={`question_${question.id}`}
+                                                name={`question__${question.id}`}
                                                 rules={[
                                                     { required: true, message: 'Please input a question.' },
                                                 ]}
@@ -170,7 +170,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                             <Col span={20}>
                                                 <Form.Item
                                                     form={form}
-                                                    name={`option_${option.id}`}
+                                                    name={`option__${option.id}`}
                                                     rules={[
                                                         { required: true, message: 'Please input an option.' },
                                                     ]}
@@ -199,27 +199,33 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                     <Form.Item
                                         form={form}
                                         label="Is mandatory"
-                                        name={`question_${question.id}_isMandatory`}
+                                        name={`question__${question.id}_isMandatory`}
                                         valuePropName="checked"
                                         initialValue={question.isMandatory}
                                     >
-                                        <Switch />
+                                        <Switch onChange={(value) =>
+                                            updateQuestion(questionIndex, "isMandatory", value)
+                                        } />
                                     </Form.Item>
                                     <Form.Item
                                         form={form}
                                         label="Min selection"
-                                        name={`question_${question.id}_minSelection`}
+                                        name={`question__${question.id}_minSelection`}
                                         initialValue={question.minSelection}
                                     >
-                                        <InputNumber />
+                                        <InputNumber onChange={(value) =>
+                                            updateQuestion(questionIndex, "minSelection", value)
+                                        } />
                                     </Form.Item>
                                     <Form.Item
                                         form={form}
                                         label="Max selection"
-                                        name={`question_${question.id}_maxSelection`}
+                                        name={`question__${question.id}_maxSelection`}
                                         initialValue={question.maxSelection}
                                     >
-                                        <InputNumber />
+                                        <InputNumber onChange={(value) =>
+                                            updateQuestion(questionIndex, "maxSelection", value)
+                                        } />
                                     </Form.Item>
                                     <Row justify="center">
                                         <Col>
