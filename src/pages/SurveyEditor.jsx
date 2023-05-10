@@ -54,7 +54,7 @@ const SurveyEditor = () => {
 
         // Filter out null values for startTime and endTime
         const filteredValues = Object.fromEntries(
-            Object.entries(newSurvey).filter(([key, value]) => !(value === null))
+            Object.entries(newSurvey).filter(([key, value]) => !(value === null) && !key.includes("__"))
         );
 
         const requestBody = removeNewIdsFromSurvey(filteredValues);
