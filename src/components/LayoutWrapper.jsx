@@ -8,7 +8,6 @@ import styles from './LayoutWrapper.module.css';
 
 const { Header, Content } = Layout;
 
-
 const LayoutWrapper = ({ children }) => {
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -34,7 +33,7 @@ const LayoutWrapper = ({ children }) => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="1" onClick={() => handleClick('/my-profile')}>My Profile</Menu.Item>
+      <Menu.Item key="1" onClick={() => handleClick('/me')}>My Profile</Menu.Item>
       <Menu.Item key="2" onClick={() => handleClick('/settings')}>Settings</Menu.Item>
     </Menu>
   );

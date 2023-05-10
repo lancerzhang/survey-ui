@@ -3,10 +3,12 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import HtmlContent from '../components/HtmlContent';
+import useFetchUsers from '../useFetchUsers';
 
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const ParticipantReplyEditor = () => {
+    const user = useFetchUsers().user;
     const [survey, setSurvey] = useState(null);
     const [surveyReply, setSurveyReply] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ const ParticipantReplyEditor = () => {
             return false;
         }
 
-        const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
+        const response = await fetch(`${serverDomain}/survey-replies/surveys/${id}/count`);
         const replyCount = await response.json();
 
         if (replyCount >= data.maxReplies) {
@@ -55,11 +57,9 @@ const ParticipantReplyEditor = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userId = 1;
-
                 const [surveyResponse, surveyReplyResponse] = await Promise.all([
-                    fetch(`${serverDomain}/api/surveys/${id}`),
-                    fetch(`${serverDomain}/api/survey-replies/surveys/${id}/user/${userId}`),
+                    fetch(`${serverDomain}/surveys/${id}`),
+                    fetch(`${serverDomain}/survey-replies/surveys/${id}/user/${user.id}`),
                 ]);
 
                 const surveyData = await surveyResponse.json();
@@ -89,7 +89,6 @@ const ParticipantReplyEditor = () => {
     }, [id]);
 
     const onFinish = async (values) => {
-        const userId = 1;
         const surveyId = parseInt(id);
 
         const questionReplies = survey.questions.map((question, questionIndex) => {
@@ -136,8 +135,12 @@ const ParticipantReplyEditor = () => {
         });
 
         const requestBody = {
-            userId,
-            surveyId,
+            user: {
+                id: user.id
+            },
+            survey: {
+                id: surveyId
+            },
             questionReplies,
         };
 
@@ -153,7 +156,7 @@ const ParticipantReplyEditor = () => {
 
         try {
             const response = await fetch(
-                `${serverDomain}/api/survey-replies/${surveyReply ? surveyReply.id : ''}`,
+                `${serverDomain}/survey-replies/${surveyReply ? surveyReply.id : ''}`,
                 requestOptions
             );
 
@@ -201,7 +204,32 @@ const ParticipantReplyEditor = () => {
                 <Form onFinish={onFinish}>
                     {survey.questions.map((question, questionIndex) => {
                         const questionReply = surveyReply ? surveyReply.questionReplies.find((qr) => qr.questionId === question.id) : '';
-
+                        let ChoiceGroup;
+                        let ChoiceItem;
+                        let initValues;
+                        if (question.maxSelection === 1) {
+                            ChoiceGroup = Radio.Group
+                            ChoiceItem = Radio
+                            initValues = questionReply ? question.options.find(
+                                (option) =>
+                                    questionReply.optionReplies.find(
+                                        (or) => or.optionId === option.id && or.selected
+                                    )
+                            ).optionText
+                                : null
+                        } else {
+                            ChoiceGroup = Checkbox.Group
+                            ChoiceItem = Checkbox
+                            initValues = questionReply
+                                ? question.options
+                                    .filter((option) =>
+                                        questionReply.optionReplies.find(
+                                            (or) => or.optionId === option.id && or.selected
+                                        )
+                                    )
+                                    .map((option) => option.optionText)
+                                : []
+                        }
                         return (
                             <React.Fragment key={questionIndex}>
                                 <Typography.Title level={4}>
@@ -218,57 +246,21 @@ const ParticipantReplyEditor = () => {
                                         <Input placeholder="Type your answer here" disabled={!editForm} />
                                     </Form.Item>
                                 )}
-                                {question.questionType === 'RADIO' && (
+                                {question.questionType === 'CHOICE' && (
                                     <Form.Item
                                         name={`question_${questionIndex}`}
-                                        initialValue={
-                                            questionReply
-                                                ? question.options.find(
-                                                    (option) =>
-                                                        questionReply.optionReplies.find(
-                                                            (or) => or.optionId === option.id && or.selected
-                                                        )
-                                                ).optionText
-                                                : null
-                                        }
+                                        initialValue={initValues}
                                         rules={[
                                             { required: true, message: 'Please select an option.' },
                                         ]}
                                     >
-                                        <Radio.Group disabled={!editForm}>
+                                        <ChoiceGroup disabled={!editForm}>
                                             {question.options.map((option, optionIndex) => (
-                                                <Radio key={optionIndex} value={option.optionText}>
+                                                <ChoiceItem key={optionIndex} value={option.optionText}>
                                                     {option.optionText}
-                                                </Radio>
+                                                </ChoiceItem>
                                             ))}
-                                        </Radio.Group>
-                                    </Form.Item>
-                                )}
-                                {question.questionType === 'CHECKBOX' && (
-                                    <Form.Item
-                                        name={`question_${questionIndex}`}
-                                        initialValue={
-                                            questionReply
-                                                ? question.options
-                                                    .filter((option) =>
-                                                        questionReply.optionReplies.find(
-                                                            (or) => or.optionId === option.id && or.selected
-                                                        )
-                                                    )
-                                                    .map((option) => option.optionText)
-                                                : []
-                                        }
-                                        rules={[
-                                            { required: true, message: 'Please select an option.' },
-                                        ]}
-                                    >
-                                        <Checkbox.Group disabled={!editForm}>
-                                            {question.options.map((option, optionIndex) => (
-                                                <Checkbox key={optionIndex} value={option.optionText}>
-                                                    {option.optionText}
-                                                </Checkbox>
-                                            ))}
-                                        </Checkbox.Group>
+                                        </ChoiceGroup>
                                     </Form.Item>
                                 )}
                             </React.Fragment>

@@ -11,7 +11,7 @@ const PublisherReplySummary = () => {
 
   useEffect(() => {
     const fetchSummary = async () => {
-      const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/summary`);
+      const response = await fetch(`${serverDomain}/survey-replies/surveys/${id}/summary`);
       const data = await response.json();
       setSummary(data);
     };
@@ -52,7 +52,7 @@ const PublisherReplySummary = () => {
   ];
 
   const handleDownloadCsv = () => {
-    window.location.href = `${serverDomain}/api/survey-replies/surveys/${id}/csv`;
+    window.location.href = `${serverDomain}/survey-replies/surveys/${id}/csv`;
   };
 
   return (

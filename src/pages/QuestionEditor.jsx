@@ -1,12 +1,11 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Divider, Form, Input, Modal, Radio, Row, Space, Tooltip } from "antd";
+import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Space, Switch, Tooltip } from "antd";
 import React, { useState } from "react";
 import { BASE_NUM_NEW_ID } from "../utils/surveyUtils";
 
 const { TextArea } = Input;
 
 const QuestionEditor = ({ form, questions, setQuestions }) => {
-    console.log("questions", questions)
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pastedOptions, setPastedOptions] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
@@ -110,7 +109,8 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                             ]}
                                             initialValue={question.questionText}
                                         >
-                                            <Input
+                                            <TextArea
+                                                autoSize={{ minRows: 1 }}
                                                 placeholder="Type your question here."
                                                 onChange={(e) =>
                                                     updateQuestion(questionIndex, e.target.value)
@@ -130,7 +130,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                 </Row>
                             </>
                             break;
-                        case "RADIO":
+                        case "CHOICE":
                             content = (
                                 <>
                                     <Row align="top">
@@ -146,7 +146,8 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                 ]}
                                                 initialValue={question.questionText}
                                             >
-                                                <Input
+                                                <TextArea
+                                                    autoSize={{ minRows: 1 }}
                                                     placeholder="Type your question here."
                                                     onChange={(e) =>
                                                         updateQuestion(questionIndex, e.target.value)
@@ -164,135 +165,77 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                             </Button>
                                         </Col>
                                     </Row>
-                                    <div>
-                                        <Radio.Group>
-                                            {question.options.map((option, optionIndex) => (
-                                                <Radio key={optionIndex}>
-                                                    <Form.Item
-                                                        form={form}
-                                                        name={`option_${option.id}`}
-                                                        rules={[
-                                                            { required: true, message: 'Please input an option.' },
-                                                        ]}
-                                                        initialValue={option.optionText}
-                                                    >
-                                                        <Input
-                                                            placeholder="Option text"
-                                                            onChange={(e) =>
-                                                                updateOptions(questionIndex, optionIndex, e.target.value)
-                                                            }
-                                                        />
-                                                    </Form.Item>
-                                                    <Tooltip title="Remove Option">
-                                                        <Button
-                                                            onClick={() => removeOption(questionIndex, optionIndex)}
-                                                            type="text"
-                                                            icon={<DeleteOutlined />}
-                                                            danger
-                                                        />
-                                                    </Tooltip>
-                                                </Radio>
-                                            ))}
-                                        </Radio.Group>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            onClick={() => addOption(questionIndex)}
-                                            type="primary"
-                                        >
-                                            Add Option
-                                        </Button>
-                                        <Button
-                                            onClick={() => openModalForQuestion(questionIndex)}
-                                            type="secondary"
-                                            style={{ marginLeft: '8px' }}
-                                        >
-                                            Paste Options
-                                        </Button>
-                                    </div>
-                                </>
-                            );
-                            break;
-                        case "CHECKBOX":
-                            content = (
-                                <>
-                                    <Row align="top">
-                                        <Col span={2}>
-                                            <span>Q{questionIndex + 1}.</span>
-                                        </Col>
-                                        <Col span={18}>
-                                            <Form.Item
-                                                form={form}
-                                                name={`question_${question.id}`}
-                                                rules={[
-                                                    { required: true, message: 'Please input a question.' },
-                                                ]}
-                                                initialValue={question.questionText}
-                                            >
-                                                <Input
-                                                    placeholder="Type your question here."
-                                                    onChange={(e) =>
-                                                        updateQuestion(questionIndex, e.target.value)
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={4}>
-                                            <Button
-                                                onClick={() => removeQuestion(questionIndex)}
-                                                type="primary"
-                                                danger
-                                            >
-                                                Remove Question
-                                            </Button>
+                                    {question.options.map((option, optionIndex) => (
+                                        <Row>
+                                            <Col span={20}>
+                                                <Form.Item
+                                                    form={form}
+                                                    name={`option_${option.id}`}
+                                                    rules={[
+                                                        { required: true, message: 'Please input an option.' },
+                                                    ]}
+                                                    initialValue={option.optionText}
+                                                >
+                                                    <TextArea
+                                                        autoSize={{ minRows: 1 }}
+                                                        placeholder="Option text"
+                                                        onChange={(e) =>
+                                                            updateOptions(questionIndex, optionIndex, e.target.value)
+                                                        }
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={4}>
+                                                <Tooltip title="Remove Option">
+                                                    <Button
+                                                        onClick={() => removeOption(questionIndex, optionIndex)}
+                                                        type="text"
+                                                        icon={<DeleteOutlined />}
+                                                        danger
+                                                    />
+                                                </Tooltip></Col>
+                                        </Row>
+                                    ))}
+                                    <Form.Item
+                                        form={form}
+                                        label="Is mandatory"
+                                        name={`question_${question.id}_isMandatory`}
+                                        valuePropName="checked"
+                                        initialValue={question.isMandatory}
+                                    >
+                                        <Switch />
+                                    </Form.Item>
+                                    <Form.Item
+                                        form={form}
+                                        label="Min selection"
+                                        name={`question_${question.id}_minSelection`}
+                                        initialValue={question.minSelection}
+                                    >
+                                        <InputNumber />
+                                    </Form.Item>
+                                    <Form.Item
+                                        form={form}
+                                        label="Max selection"
+                                        name={`question_${question.id}_maxSelection`}
+                                        initialValue={question.maxSelection}
+                                    >
+                                        <InputNumber />
+                                    </Form.Item>
+                                    <Row justify="center">
+                                        <Col>
+                                            <Space>
+                                                <Button onClick={() => addOption(questionIndex)} type="primary">
+                                                    Add Option
+                                                </Button>
+                                                <Button
+                                                    onClick={() => openModalForQuestion(questionIndex)}
+                                                    type="secondary"
+                                                >
+                                                    Paste Options
+                                                </Button>
+                                            </Space>
                                         </Col>
                                     </Row>
-                                    <div>
-                                        <Checkbox.Group>
-                                            {question.options.map((option, optionIndex) => (
-                                                <Checkbox key={optionIndex}>
-                                                    <Form.Item
-                                                        form={form}
-                                                        name={`option_${option.id}`}
-                                                        rules={[
-                                                            { required: true, message: 'Please input an option.' },
-                                                        ]}
-                                                        initialValue={option.optionText}
-                                                    >
-                                                        <Input
-                                                            placeholder="Option text"
-                                                            onChange={(e) =>
-                                                                updateOptions(questionIndex, optionIndex, e.target.value)
-                                                            }
-                                                        />
-                                                    </Form.Item>
-                                                    <Tooltip title="Remove Option">
-                                                        <Button
-                                                            onClick={() => removeOption(questionIndex, optionIndex)}
-                                                            type="text"
-                                                            icon={<DeleteOutlined />}
-                                                            danger
-                                                        />
-                                                    </Tooltip>
-                                                </Checkbox>
-                                            ))}
-                                        </Checkbox.Group>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            onClick={() => addOption(questionIndex)}
-                                            type="primary"
-                                        >
-                                            Add Option
-                                        </Button>
-                                        <Button
-                                            onClick={() => openModalForQuestion(questionIndex)}
-                                            type="secondary"
-                                            style={{ marginLeft: '8px' }}
-                                        >
-                                            Paste Options
-                                        </Button>
-                                    </div>
                                 </>
                             );
                             break;
@@ -307,17 +250,18 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                     );
                 })}
             </Space>
-            <Space style={{ marginTop: "16px" }}>
-                <Button onClick={() => addQuestion("TEXT")} type="primary">
-                    Add Input
-                </Button>
-                <Button onClick={() => addQuestion("RADIO")} type="primary">
-                    Add Radio
-                </Button>
-                <Button onClick={() => addQuestion("CHECKBOX")} type="primary">
-                    Add Checkbox
-                </Button>
-            </Space>
+            <Row justify="center">
+                <Col>
+                    <Space>
+                        <Button onClick={() => addQuestion("TEXT")} type="primary">
+                            Add Input
+                        </Button>
+                        <Button onClick={() => addQuestion("CHOICE")} type="primary">
+                            Add Choice
+                        </Button>
+                    </Space>
+                </Col>
+            </Row>
             <Modal
                 title="Paste Options"
                 visible={isModalVisible}

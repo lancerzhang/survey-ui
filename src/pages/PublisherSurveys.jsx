@@ -3,6 +3,7 @@ import { Button, message, Modal } from 'antd';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
+import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey } from '../utils/surveyUtils';
 
 const { confirm } = Modal;
@@ -10,9 +11,9 @@ const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 const uiDomain = process.env.REACT_APP_UI_DOMAIN;
 
 const PublisherSurveys = () => {
+  const user = useFetchUsers().user;
 
-  const userId = 1;
-  const fetchDataUrl = `${serverDomain}/api/surveys/user/${userId}?`;
+  const fetchDataUrl = `${serverDomain}/surveys/user/${user.id}?`;
   const history = useHistory();
   const [refresh, setRefresh] = useState(false);
 
@@ -44,7 +45,7 @@ const PublisherSurveys = () => {
 
   const handleCloneClick = async (e, surveyId) => {
     e.stopPropagation();
-    const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`);
+    const response = await fetch(`${serverDomain}/surveys/${surveyId}`);
     const surveyToClone = await response.json();
     let clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
 
@@ -64,7 +65,7 @@ const PublisherSurveys = () => {
         };
 
         try {
-          const response = await fetch(`${serverDomain}/api/surveys`, requestOptions);
+          const response = await fetch(`${serverDomain}/surveys`, requestOptions);
 
           if (response.ok) {
             message.success('Survey was cloned');
@@ -91,7 +92,7 @@ const PublisherSurveys = () => {
         };
 
         try {
-          const response = await fetch(`${serverDomain}/api/surveys/${surveyId}`, requestOptions);
+          const response = await fetch(`${serverDomain}/surveys/${surveyId}`, requestOptions);
 
           if (response.ok) {
             message.success('Survey was deleted');

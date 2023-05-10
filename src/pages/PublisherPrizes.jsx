@@ -11,13 +11,13 @@ const PublisherPrizes = () => {
     const [form] = Form.useForm();
 
     const fetchPrizes = async () => {
-        const response = await fetch(`${serverDomain}/api/prizes?surveyId=${id}`);
+        const response = await fetch(`${serverDomain}/prizes?surveyId=${id}`);
         const data = await response.json();
         setPrizes(data);
     };
 
     const fetchReplyCount = async () => {
-        const response = await fetch(`${serverDomain}/api/survey-replies/surveys/${id}/count`);
+        const response = await fetch(`${serverDomain}/survey-replies/surveys/${id}/count`);
         const count = await response.json();
         setReplyCount(count);
     };
@@ -32,7 +32,7 @@ const PublisherPrizes = () => {
     }, []);
 
     const handleSubmit = async (values) => {
-        const response = await fetch(`${serverDomain}/api/prizes`, {
+        const response = await fetch(`${serverDomain}/prizes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,14 +54,14 @@ const PublisherPrizes = () => {
 
     const columns = [
         {
-            title: 'Username',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'Display Name',
+            dataIndex: 'displayName',
+            key: 'displayName',
         },
         {
-            title: 'Staff ID',
-            dataIndex: 'staffId',
-            key: 'staffId',
+            title: 'Employee ID',
+            dataIndex: 'employeeId',
+            key: 'employeeId',
         },
     ];
 
@@ -81,8 +81,8 @@ const PublisherPrizes = () => {
                             columns={columns}
                             dataSource={prize.winners.map((winner) => ({
                                 key: winner.id,
-                                username: winner.user.username,
-                                staffId: winner.user.staffId,
+                                displayName: winner.user.displayName,
+                                employeeId: winner.user.employeeId,
                             }))}
                             pagination={false}
                         />
