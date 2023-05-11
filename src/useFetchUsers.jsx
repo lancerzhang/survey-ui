@@ -14,11 +14,8 @@ const useFetchMe = () => {
                     const meData = await response.json();
                     setUsers({ me: meData, user: meData });
                 } catch (error) {
-                    if (error.response && error.response.status === 401) {
-                        window.location.href = `${serverDomain}/oauth2/sso`;
-                    } else {
-                        console.error('Error fetching user data:', error);
-                    }
+                    console.error('Error fetching user data:', error);
+
                 }
             };
             fetchMe();

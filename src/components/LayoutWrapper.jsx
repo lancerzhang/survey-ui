@@ -34,7 +34,6 @@ const LayoutWrapper = ({ children }) => {
   const userMenu = (
     <Menu>
       <Menu.Item key="1" onClick={() => handleClick('/me')}>My Profile</Menu.Item>
-      <Menu.Item key="2" onClick={() => handleClick('/settings')}>Settings</Menu.Item>
     </Menu>
   );
 

@@ -104,31 +104,33 @@ const ParticipantReplyEditor = () => {
 
             if (question.questionType === 'TEXT') {
                 questionReply.replyText = values[`question_${questionIndex}`];
-            } else if (question.questionType === 'RADIO') {
-                const selectedOption = question.options.find(
-                    (option) => option.optionText === values[`question_${questionIndex}`]
-                );
+            } else if (question.questionType === 'CHOICE') {
+                if (question.maxSelection === 1) {
+                    // Radio question
+                    const selectedOption = question.options.find(
+                        (option) => option.optionText === values[`question_${questionIndex}`]
+                    );
 
-                questionReply.optionReplies = question.options.map((option) => {
-                    const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
+                    questionReply.optionReplies = question.options.map((option) => {
+                        const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
 
-                    return {
-                        id: existingOptionReply?.id,
-                        optionId: option.id,
-                        selected: option.id === selectedOption.id,
-                    };
-                });
-            }
-            else if (question.questionType === 'CHECKBOX') {
-                questionReply.optionReplies = question.options.map((option) => {
-                    const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
+                        return {
+                            id: existingOptionReply?.id,
+                            optionId: option.id,
+                            selected: option.id === selectedOption.id,
+                        };
+                    });
+                } else {
+                    questionReply.optionReplies = question.options.map((option) => {
+                        const existingOptionReply = existingQuestionReply && existingQuestionReply.optionReplies.find((or) => or.optionId === option.id);
 
-                    return {
-                        id: existingOptionReply?.id,
-                        optionId: option.id,
-                        selected: values[`question_${questionIndex}`].includes(option.optionText),
-                    };
-                });
+                        return {
+                            id: existingOptionReply?.id,
+                            optionId: option.id,
+                            selected: values[`question_${questionIndex}`].includes(option.optionText),
+                        };
+                    });
+                }
             }
 
             return questionReply;
@@ -240,7 +242,7 @@ const ParticipantReplyEditor = () => {
                                         name={`question_${questionIndex}`}
                                         initialValue={questionReply ? questionReply.replyText : ''}
                                         rules={[
-                                            { required: true, message: 'Please input a question.' },
+                                            { required: question.isMandatory, message: 'Please input an answer.' },
                                         ]}
                                     >
                                         <Input placeholder="Type your answer here" disabled={!editForm} />
@@ -251,7 +253,23 @@ const ParticipantReplyEditor = () => {
                                         name={`question_${questionIndex}`}
                                         initialValue={initValues}
                                         rules={[
-                                            { required: true, message: 'Please select an option.' },
+                                            {
+                                                required: question.isMandatory,
+                                                message: 'Please select an option.'
+                                            },
+                                            {
+                                                validator: (_, value) => {
+                                                    // only for CheckBox
+                                                    if (question.maxSelection !== 1) {
+                                                        if (question.minSelection && value.length < question.maxSelection) {
+                                                            return Promise.reject(new Error(`Please select more than ${question.minSelection} options.`));
+                                                        } else if (question.maxSelection && value.length > question.maxSelection) {
+                                                            return Promise.reject(new Error(`Please select less than${question.maxSelection} options.`));
+                                                        }
+                                                    }
+                                                    return Promise.resolve();
+                                                },
+                                            }
                                         ]}
                                     >
                                         <ChoiceGroup disabled={!editForm}>

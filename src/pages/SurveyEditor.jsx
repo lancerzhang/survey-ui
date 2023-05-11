@@ -8,6 +8,7 @@ import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey, removeNewIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
 
+const { TextArea } = Input;
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
 
 const SurveyEditor = () => {
@@ -110,7 +111,7 @@ const SurveyEditor = () => {
         const formData = new FormData();
         formData.append('image', file);
 
-        const response = await fetch(`${serverDomain}/upload`, {
+        const response = await fetch(`${serverDomain}/files/upload`, {
             method: 'POST',
             body: formData,
         });
@@ -120,7 +121,7 @@ const SurveyEditor = () => {
         }
 
         const filename = await response.text();
-        const imageUrl = `${serverDomain}/image/${filename}`;
+        const imageUrl = `${serverDomain}/files/image/${filename}`;
         return imageUrl;
     };
 
@@ -184,7 +185,10 @@ const SurveyEditor = () => {
                         name="title"
                         rules={[{ required: true, message: 'Please input a title!' }]}
                     >
-                        <Input placeholder="Enter survey title" />
+                        <TextArea
+                            autoSize={{ minRows: 1 }}
+                            placeholder="Enter survey title"
+                        />
                     </Form.Item>
                     <Form.Item label="Description">
                         <ReactQuill

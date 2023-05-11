@@ -6,6 +6,7 @@ import { BASE_NUM_NEW_ID } from "../utils/surveyUtils";
 const { TextArea } = Input;
 
 const QuestionEditor = ({ form, questions, setQuestions }) => {
+
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pastedOptions, setPastedOptions] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
@@ -128,6 +129,18 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                         </Button>
                                     </Col>
                                 </Row>
+
+                                <Form.Item
+                                    form={form}
+                                    label="Is mandatory"
+                                    name={`question__${question.id}_isMandatory`}
+                                    valuePropName="checked"
+                                    initialValue={question.isMandatory}
+                                >
+                                    <Switch onChange={(value) =>
+                                        updateQuestion(questionIndex, "isMandatory", value)
+                                    } />
+                                </Form.Item>
                             </>
                             break;
                         case "CHOICE":
@@ -150,7 +163,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                     autoSize={{ minRows: 1 }}
                                                     placeholder="Type your question here."
                                                     onChange={(e) =>
-                                                        updateQuestion(questionIndex, e.target.value)
+                                                        updateQuestion(questionIndex, "questionText", e.target.value)
                                                     }
                                                 />
                                             </Form.Item>
