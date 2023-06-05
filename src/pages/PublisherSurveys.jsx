@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, message, Modal } from 'antd';
+import { Button, Input, Modal, message } from 'antd';
 import copy from 'copy-to-clipboard';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
