@@ -1,5 +1,6 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, message, Modal } from 'antd';
+import copy from 'copy-to-clipboard';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
@@ -16,6 +17,8 @@ const PublisherSurveys = () => {
   const fetchDataUrl = `${serverDomain}/surveys/user/${user.id}?`;
   const history = useHistory();
   const [refresh, setRefresh] = useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
+  const [surveyUrl, setSurveyUrl] = useState("");
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -39,7 +42,12 @@ const PublisherSurveys = () => {
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
     const shareUrl = `${uiDomain}/participant/reply-editor/${surveyId}`;
-    navigator.clipboard.writeText(shareUrl);
+    setSurveyUrl(shareUrl);
+    setIsShareModalVisible(true);
+  };
+
+  const handleCopyClick = () => {
+    copy(surveyUrl);
     message.success('Survey URL was copied to clipboard, please send to others.');
   };
 
@@ -48,10 +56,7 @@ const PublisherSurveys = () => {
     const response = await fetch(`${serverDomain}/surveys/${surveyId}`);
     const surveyToClone = await response.json();
     let clonedSurvey = JSON.parse(JSON.stringify(surveyToClone));
-
     clonedSurvey = removeIdsFromSurvey(clonedSurvey);
-
-    // Add '(clone)' to clonedSurvey title
     clonedSurvey.title = `${clonedSurvey.title} (clone)`;
 
     confirm({
@@ -121,12 +126,29 @@ const PublisherSurveys = () => {
   };
 
   return (
-    <PublisherList
-      fetchDataUrl={fetchDataUrl}
-      onItemClick={onItemClick}
-      renderItemActions={renderItemActions}
-      refresh={refresh}
-    />
+    <>
+      <PublisherList
+        fetchDataUrl={fetchDataUrl}
+        onItemClick={onItemClick}
+        renderItemActions={renderItemActions}
+        refresh={refresh}
+      />
+      <Modal
+        title="Share Survey"
+        visible={isShareModalVisible}
+        onCancel={() => setIsShareModalVisible(false)}
+        footer={null}
+      >
+        <Input
+          value={surveyUrl}
+          addonAfter={
+            <Button onClick={handleCopyClick}>
+              Copy
+            </Button>
+          }
+        />
+      </Modal>
+    </>
   );
 };
 
