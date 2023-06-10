@@ -1,6 +1,7 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Space, Switch, Tooltip } from "antd";
 import React, { useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { BASE_NUM_NEW_ID } from "../utils/surveyUtils";
 
 const { TextArea } = Input;
@@ -11,6 +12,19 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     const [pastedOptions, setPastedOptions] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
     const [sequenceNumber, setSequenceNumber] = useState(BASE_NUM_NEW_ID);
+
+    const onDragEnd = (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const items = Array.from(questions);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        setQuestions(items);
+    }
+
 
     const handleAddPastedOptions = (questionIndex) => {
         const newOptions = pastedOptions.split('\n');
@@ -89,194 +103,208 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
     };
 
     return (
-        <div >
+        <div>
             <h2>Questions</h2>
-            <Space direction="vertical" style={{ width: "100%" }} size="large">
-                {questions.map((question, questionIndex) => {
-                    let content;
-                    switch (question.questionType) {
-                        case "TEXT":
-                            content = <>
-                                <Row align="top">
-                                    <Col span={2}>
-                                        <span>Q{questionIndex + 1}.</span>
-                                    </Col>
-                                    <Col span={18}>
-                                        <Form.Item
-                                            form={form}
-                                            name={`question__${question.id}`}
-                                            rules={[
-                                                { required: true, message: 'Please input a question.' },
-                                            ]}
-                                            initialValue={question.questionText}
-                                        >
-                                            <TextArea
-                                                autoSize={{ minRows: 1 }}
-                                                placeholder="Type your question here."
-                                                onChange={(e) =>
-                                                    updateQuestion(questionIndex, "questionText", e.target.value)
-                                                }
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={4}>
-                                        <Button
-                                            onClick={() => removeQuestion(questionIndex)}
-                                            type="primary"
-                                            danger
-                                        >
-                                            Remove Question
-                                        </Button>
-                                    </Col>
-                                </Row>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="questions">
+                    {(provided) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps}>
+                            <Space direction="vertical" style={{ width: "100%" }} size="large">
+                                {questions.map((question, questionIndex) => (
+                                    <Draggable key={question.id} draggableId={String(question.id)} index={questionIndex}>
+                                        {(provided) => {
 
-                                <Form.Item
-                                    form={form}
-                                    label="Is mandatory"
-                                    name={`question__${question.id}_isMandatory`}
-                                    valuePropName="checked"
-                                    initialValue={question.isMandatory}
-                                >
-                                    <Switch onChange={(value) =>
-                                        updateQuestion(questionIndex, "isMandatory", value)
-                                    } />
-                                </Form.Item>
-                            </>
-                            break;
-                        case "CHOICE":
-                            content = (
-                                <>
-                                    <Row align="top">
-                                        <Col span={2}>
-                                            <span>Q{questionIndex + 1}.</span>
-                                        </Col>
-                                        <Col span={18}>
-                                            <Form.Item
-                                                form={form}
-                                                name={`question__${question.id}`}
-                                                rules={[
-                                                    { required: true, message: 'Please input a question.' },
-                                                ]}
-                                                initialValue={question.questionText}
-                                            >
-                                                <TextArea
-                                                    autoSize={{ minRows: 1 }}
-                                                    placeholder="Type your question here."
-                                                    onChange={(e) =>
-                                                        updateQuestion(questionIndex, "questionText", e.target.value)
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={4}>
-                                            <Button
-                                                onClick={() => removeQuestion(questionIndex)}
-                                                type="primary"
-                                                danger
-                                            >
-                                                Remove Question
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    {question.options.map((option, optionIndex) => (
-                                        <Row>
-                                            <Col span={20}>
-                                                <Form.Item
-                                                    form={form}
-                                                    name={`option__${option.id}`}
-                                                    rules={[
-                                                        { required: true, message: 'Please input an option.' },
-                                                    ]}
-                                                    initialValue={option.optionText}
-                                                >
-                                                    <TextArea
-                                                        autoSize={{ minRows: 1 }}
-                                                        placeholder="Option text"
-                                                        onChange={(e) =>
-                                                            updateOptions(questionIndex, optionIndex, e.target.value)
-                                                        }
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={4}>
-                                                <Tooltip title="Remove Option">
-                                                    <Button
-                                                        onClick={() => removeOption(questionIndex, optionIndex)}
-                                                        type="text"
-                                                        icon={<DeleteOutlined />}
-                                                        danger
-                                                    />
-                                                </Tooltip></Col>
-                                        </Row>
-                                    ))}
-                                    <Form.Item
-                                        form={form}
-                                        label="Is mandatory"
-                                        name={`question__${question.id}_isMandatory`}
-                                        valuePropName="checked"
-                                        initialValue={question.isMandatory}
-                                    >
-                                        <Switch onChange={(value) =>
-                                            updateQuestion(questionIndex, "isMandatory", value)
-                                        } />
-                                    </Form.Item>
-                                    <Form.Item
-                                        form={form}
-                                        label="Min selection"
-                                        name={`question__${question.id}_minSelection`}
-                                        initialValue={question.minSelection}
-                                    >
-                                        <InputNumber onChange={(value) =>
-                                            updateQuestion(questionIndex, "minSelection", value)
-                                        } />
-                                    </Form.Item>
-                                    <Form.Item
-                                        form={form}
-                                        label="Max selection"
-                                        name={`question__${question.id}_maxSelection`}
-                                        initialValue={question.maxSelection}
-                                    >
-                                        <InputNumber onChange={(value) =>
-                                            updateQuestion(questionIndex, "maxSelection", value)
-                                        } />
-                                    </Form.Item>
-                                    <Row justify="center">
-                                        <Col>
-                                            <Space>
-                                                <Button onClick={() => addOption(questionIndex)} type="primary">
-                                                    Add Option
-                                                </Button>
-                                                <Button
-                                                    onClick={() => openModalForQuestion(questionIndex)}
-                                                    type="secondary"
-                                                >
-                                                    Paste Options
-                                                </Button>
-                                            </Space>
-                                        </Col>
-                                    </Row>
-                                </>
-                            );
-                            break;
-                        default:
-                            return null;
-                    }
-                    return (
-                        <React.Fragment key={question.id}>
-                            {content}
-                            <Divider />
-                        </React.Fragment>
-                    );
-                })}
-            </Space>
+                                            let content;
+                                            switch (question.questionType) {
+                                                case "TEXT":
+                                                    content = <>
+                                                        <Row align="top">
+                                                            <Col span={2}>
+                                                                <span>Q{questionIndex + 1}.</span>
+                                                            </Col>
+                                                            <Col span={18}>
+                                                                <Form.Item
+                                                                    form={form}
+                                                                    name={`question__${question.id}`}
+                                                                    rules={[
+                                                                        { required: true, message: 'Please input a question.' },
+                                                                    ]}
+                                                                    initialValue={question.questionText}
+                                                                >
+                                                                    <TextArea
+                                                                        autoSize={{ minRows: 1 }}
+                                                                        placeholder="Type your question here."
+                                                                        onChange={(e) =>
+                                                                            updateQuestion(questionIndex, "questionText", e.target.value)
+                                                                        }
+                                                                    />
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col span={4}>
+                                                                <Button
+                                                                    onClick={() => removeQuestion(questionIndex)}
+                                                                    type="primary"
+                                                                    danger
+                                                                >
+                                                                    Remove Question
+                                                                </Button>
+                                                            </Col>
+                                                        </Row>
+
+                                                        <Form.Item
+                                                            form={form}
+                                                            label="Is mandatory"
+                                                            name={`question__${question.id}_isMandatory`}
+                                                            valuePropName="checked"
+                                                            initialValue={question.isMandatory}
+                                                        >
+                                                            <Switch onChange={(value) =>
+                                                                updateQuestion(questionIndex, "isMandatory", value)
+                                                            } />
+                                                        </Form.Item>
+                                                    </>
+                                                    break;
+                                                case "CHOICE":
+                                                    content = (
+                                                        <>
+                                                            <Row align="top">
+                                                                <Col span={2}>
+                                                                    <span>Q{questionIndex + 1}.</span>
+                                                                </Col>
+                                                                <Col span={18}>
+                                                                    <Form.Item
+                                                                        form={form}
+                                                                        name={`question__${question.id}`}
+                                                                        rules={[
+                                                                            { required: true, message: 'Please input a question.' },
+                                                                        ]}
+                                                                        initialValue={question.questionText}
+                                                                    >
+                                                                        <TextArea
+                                                                            autoSize={{ minRows: 1 }}
+                                                                            placeholder="Type your question here."
+                                                                            onChange={(e) =>
+                                                                                updateQuestion(questionIndex, "questionText", e.target.value)
+                                                                            }
+                                                                        />
+                                                                    </Form.Item>
+                                                                </Col>
+                                                                <Col span={4}>
+                                                                    <Button
+                                                                        onClick={() => removeQuestion(questionIndex)}
+                                                                        type="primary"
+                                                                        danger
+                                                                    >
+                                                                        Remove Question
+                                                                    </Button>
+                                                                </Col>
+                                                            </Row>
+                                                            {question.options.map((option, optionIndex) => (
+                                                                <Row>
+                                                                    <Col span={20}>
+                                                                        <Form.Item
+                                                                            form={form}
+                                                                            name={`option__${option.id}`}
+                                                                            rules={[
+                                                                                { required: true, message: 'Please input an option.' },
+                                                                            ]}
+                                                                            initialValue={option.optionText}
+                                                                        >
+                                                                            <TextArea
+                                                                                autoSize={{ minRows: 1 }}
+                                                                                placeholder="Option text"
+                                                                                onChange={(e) =>
+                                                                                    updateOptions(questionIndex, optionIndex, e.target.value)
+                                                                                }
+                                                                            />
+                                                                        </Form.Item>
+                                                                    </Col>
+                                                                    <Col span={4}>
+                                                                        <Tooltip title="Remove Option">
+                                                                            <Button
+                                                                                onClick={() => removeOption(questionIndex, optionIndex)}
+                                                                                type="text"
+                                                                                icon={<DeleteOutlined />}
+                                                                                danger
+                                                                            />
+                                                                        </Tooltip></Col>
+                                                                </Row>
+                                                            ))}
+                                                            <Form.Item
+                                                                form={form}
+                                                                label="Is mandatory"
+                                                                name={`question__${question.id}_isMandatory`}
+                                                                valuePropName="checked"
+                                                                initialValue={question.isMandatory}
+                                                            >
+                                                                <Switch onChange={(value) =>
+                                                                    updateQuestion(questionIndex, "isMandatory", value)
+                                                                } />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                form={form}
+                                                                label="Min selection"
+                                                                name={`question__${question.id}_minSelection`}
+                                                                initialValue={question.minSelection}
+                                                            >
+                                                                <InputNumber onChange={(value) =>
+                                                                    updateQuestion(questionIndex, "minSelection", value)
+                                                                } />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                form={form}
+                                                                label="Max selection"
+                                                                name={`question__${question.id}_maxSelection`}
+                                                                initialValue={question.maxSelection}
+                                                            >
+                                                                <InputNumber onChange={(value) =>
+                                                                    updateQuestion(questionIndex, "maxSelection", value)
+                                                                } />
+                                                            </Form.Item>
+                                                            <Row justify="center">
+                                                                <Col>
+                                                                    <Space>
+                                                                        <Button onClick={() => addOption(questionIndex)} type="primary">
+                                                                            Add Option
+                                                                        </Button>
+                                                                        <Button
+                                                                            onClick={() => openModalForQuestion(questionIndex)}
+                                                                            type="secondary"
+                                                                        >
+                                                                            Paste Options
+                                                                        </Button>
+                                                                    </Space>
+                                                                </Col>
+                                                            </Row>
+                                                        </>
+                                                    );
+                                                    break;
+                                                default:
+                                                    return null;
+                                            }
+                                            return (
+                                                <div key={question.id} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                    {content}
+                                                    <Divider />
+                                                </div>
+                                            );
+                                        }}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </Space>
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
             <Row justify="center">
                 <Col>
                     <Space>
                         <Button onClick={() => addQuestion("TEXT")} type="primary">
-                            Add Input
+                            Add Text Question
                         </Button>
                         <Button onClick={() => addQuestion("CHOICE")} type="primary">
-                            Add Choice
+                            Add Choice Question
                         </Button>
                     </Space>
                 </Col>
@@ -304,5 +332,6 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
         </div>
     );
 };
+
 
 export default QuestionEditor;
