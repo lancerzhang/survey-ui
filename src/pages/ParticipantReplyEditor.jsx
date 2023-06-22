@@ -1,7 +1,7 @@
 import { Alert, Button, Checkbox, Form, Input, Radio, Typography, notification } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import HtmlContent from '../components/HtmlContent';
 import useFetchUsers from '../useFetchUsers';
 
@@ -16,7 +16,7 @@ const ParticipantReplyEditor = () => {
     const [editForm, setEditForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const { id } = useParams();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const validateDate = (data) => {
         const now = moment();
@@ -163,7 +163,7 @@ const ParticipantReplyEditor = () => {
             );
 
             if (response.ok) {
-                history.push('/participant/replies');
+                navigate('/participant/replies');
             } else {
                 notification.error({ message: 'Error replying survey.' });
             }

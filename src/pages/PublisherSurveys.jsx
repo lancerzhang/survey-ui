@@ -2,7 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Input, Modal, message } from 'antd';
 import copy from 'copy-to-clipboard';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
 import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey } from '../utils/surveyUtils';
@@ -15,7 +15,7 @@ const PublisherSurveys = () => {
   const user = useFetchUsers().user;
 
   const fetchDataUrl = `${serverDomain}/surveys/user/${user.id}?`;
-  const history = useHistory();
+  const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
   const [isShareModalVisible, setIsShareModalVisible] = useState(false);
   const [surveyUrl, setSurveyUrl] = useState("");
@@ -26,17 +26,17 @@ const PublisherSurveys = () => {
 
   const handleEditClick = (e, surveyId) => {
     e.stopPropagation();
-    history.push(`/publisher/survey-editor/${surveyId}`);
+    navigate(`/publisher/survey-editor/${surveyId}`);
   };
 
   const handleResultClick = (e, surveyId) => {
     e.stopPropagation();
-    history.push(`/publisher/survey/${surveyId}/summary`);
+    navigate(`/publisher/survey/${surveyId}/summary`);
   };
 
   const handlePrizeClick = (e, surveyId) => {
     e.stopPropagation();
-    history.push(`/publisher/survey/${surveyId}/prizes`);
+    navigate(`/publisher/survey/${surveyId}/prizes`);
   };
 
   const handleShareClick = (e, surveyId) => {
@@ -122,7 +122,7 @@ const PublisherSurveys = () => {
   ];
 
   const onItemClick = (itemId) => {
-    history.push(`/publisher/survey-editor/${itemId}`);
+    navigate(`/publisher/survey-editor/${itemId}`);
   };
 
   return (

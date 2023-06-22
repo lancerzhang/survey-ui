@@ -1,7 +1,7 @@
 import { MenuOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Col, Dropdown, Layout, Menu, Row, Space } from 'antd';
 import React, { useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useMediaQuery from '../hooks/useMediaQuery';
 import Footer from './Footer';
 import styles from './LayoutWrapper.module.css';
@@ -11,9 +11,9 @@ const { Header, Content } = Layout;
 const LayoutWrapper = ({ children }) => {
   const isMobile = useMediaQuery('(max-width: 767px)');
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const handleClick = (path) => {
-    history.push(path);
+    navigate(path);
   };
 
   // Get the current location

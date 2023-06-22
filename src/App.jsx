@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import PrivateRoute from "./PrivateRoute";
+import { HashRouter, Route, Routes } from 'react-router-dom';
+import { PrivateRoute } from "./PrivateRoute";
 import UsersContext from './UsersContext';
 import LayoutWrapper from './components/LayoutWrapper';
 import Me from './pages/Me';
@@ -17,22 +17,22 @@ const App = () => {
     const [me, setMe] = useState(null);
     return (
         <UsersContext.Provider value={{ users: me, setUsers: setMe }}>
-            <Router>
+            <HashRouter>
                 <LayoutWrapper>
-                    <Switch>
-                        <PrivateRoute exact path="/" component={PublisherSurveys} />
-                        <PrivateRoute path="/publisher/survey-editor/:id" component={SurveyEditor} />
-                        <PrivateRoute path="/publisher/surveys" component={PublisherSurveys} />
-                        <PrivateRoute path="/publisher/templates" component={PublisherTemplates} />
-                        <PrivateRoute path="/publisher/survey/:id/summary" component={PublisherReplySummary} />
-                        <PrivateRoute path="/publisher/survey/:id/prizes" component={PublisherPrizes} />
-                        <PrivateRoute path="/publisher/delegates" component={PublisherDelegates} />
-                        <PrivateRoute path="/participant/reply-editor/:id" component={ParticipantReplyEditor} />
-                        <PrivateRoute path="/participant/replies" component={ParticipantReplies} />
-                        <PrivateRoute path="/me" component={Me} />
-                    </Switch>
+                    <Routes>
+                        <Route exact path="/" element={<PrivateRoute component={PublisherSurveys} />} />
+                        <Route path="/publisher/survey-editor/:id" element={<PrivateRoute component={SurveyEditor} />} />
+                        <Route path="/publisher/surveys" element={<PrivateRoute component={PublisherSurveys} />} />
+                        <Route path="/publisher/templates" element={<PrivateRoute component={PublisherTemplates} />} />
+                        <Route path="/publisher/survey/:id/summary" element={<PrivateRoute component={PublisherReplySummary} />} />
+                        <Route path="/publisher/survey/:id/prizes" element={<PrivateRoute component={PublisherPrizes} />} />
+                        <Route path="/publisher/delegates" element={<PrivateRoute component={PublisherDelegates} />} />
+                        <Route path="/participant/reply-editor/:id" element={<PrivateRoute component={ParticipantReplyEditor} />} />
+                        <Route path="/participant/replies" element={<PrivateRoute component={ParticipantReplies} />} />
+                        <Route path="/me" element={<PrivateRoute component={Me} />} />
+                    </Routes>
                 </LayoutWrapper>
-            </Router>
+            </HashRouter>
         </UsersContext.Provider>
     );
 };

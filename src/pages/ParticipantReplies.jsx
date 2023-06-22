@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
 import useFetchUsers from '../useFetchUsers';
 
@@ -9,10 +9,10 @@ const ParticipantReplies = () => {
   const user = useFetchUsers().user;
   const [refresh, setRefresh] = useState(false);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleItemClick = (replyId) => {
-    history.push(`/participant/reply-editor/${replyId}`);
+    navigate(`/participant/reply-editor/${replyId}`);
   };
 
   const fetchDataUrl = `${serverDomain}/surveys/replied/user/${user.id}?`;

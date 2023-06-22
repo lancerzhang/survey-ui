@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PublisherList from '../components/SurveyList';
 
 const { confirm } = Modal;
@@ -15,16 +15,16 @@ const PublisherTemplates = () => {
     setRefresh(!refresh);
   };
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleEditClick = (e, surveyId) => {
     e.stopPropagation();
-    history.push(`/publisher/survey-editor/${surveyId}`);
+    navigate(`/publisher/survey-editor/${surveyId}`);
   };
 
   const handleUseClick = (e, surveyId) => {
     e.stopPropagation();
-    history.push(`/publisher/survey-editor/new?templateId=${surveyId}`);
+    navigate(`/publisher/survey-editor/new?templateId=${surveyId}`);
   };
 
   const handleDeleteClick = async (e, surveyId) => {
@@ -61,7 +61,7 @@ const PublisherTemplates = () => {
   ];
 
   const onItemClick = (itemId) => {
-    history.push(`/publisher/survey-editor/${itemId}`);
+    navigate(`/publisher/survey-editor/${itemId}`);
   };
 
   return (

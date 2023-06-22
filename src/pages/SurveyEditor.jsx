@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey, removeNewIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
@@ -15,7 +15,7 @@ const SurveyEditor = () => {
     const user = useFetchUsers().user;
     const [survey, setSurvey] = useState(null);
     const { id } = useParams();
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const [form] = Form.useForm();
     const queryParams = new URLSearchParams(location.search);
@@ -78,9 +78,9 @@ const SurveyEditor = () => {
 
             if (response.ok) {
                 if (filteredValues.isTemplate) {
-                    history.push('/publisher/templates');
+                    navigate('/publisher/templates');
                 } else {
-                    history.push('/publisher/surveys');
+                    navigate('/publisher/surveys');
                 }
             } else {
                 notification.error({ message: errorMessage });
@@ -100,7 +100,7 @@ const SurveyEditor = () => {
     };
 
     const handleClose = () => {
-        history.goBack();
+        navigate(-1);
     };
 
     const setQuestions = (questions) => {
