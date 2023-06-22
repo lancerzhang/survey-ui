@@ -42,7 +42,7 @@ const PublisherList = ({
                     >
                         <List.Item.Meta
                             title={item.title}
-                            description={dayjs(item.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
+                            description={dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                         />
                         <HtmlContent>{item.description}</HtmlContent>
                     </List.Item>
