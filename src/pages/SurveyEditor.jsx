@@ -1,5 +1,5 @@
 import { Button, Col, DatePicker, Divider, Form, Input, InputNumber, Row, Space, Switch, notification } from 'antd';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
@@ -173,8 +173,8 @@ const SurveyEditor = () => {
                     form={form}
                     initialValues={{
                         ...survey,
-                        startTime: survey.startTime ? moment(survey.startTime) : null,
-                        endTime: survey.endTime ? moment(survey.endTime) : null,
+                        startTime: survey.startTime ? dayjs(survey.startTime) : null,
+                        endTime: survey.endTime ? dayjs(survey.endTime) : null,
                     }}
                     onFinish={onFinish}
                     labelCol={{ span: 4 }}
