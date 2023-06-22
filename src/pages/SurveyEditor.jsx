@@ -223,19 +223,11 @@ const SurveyEditor = () => {
                     <Form.Item label="Start Time" name="startTime">
                         <DatePicker
                             showTime
-                            onChange={(value) => {
-                                const utcValue = value ? moment.tz(value, 'UTC') : null;
-                                form.setFieldsValue({ startTime: utcValue });
-                            }}
                         />
                     </Form.Item>
                     <Form.Item label="End Time" name="endTime" rules={[{ validator: validateEndTime }]}>
                         <DatePicker
                             showTime
-                            onChange={(value) => {
-                                const utcValue = value ? moment.tz(value, 'UTC') : null;
-                                form.setFieldsValue({ endTime: utcValue });
-                            }}
                         />
                     </Form.Item>
                     <Form.Item label="Max Replies" name="maxReplies">
