@@ -1,5 +1,5 @@
 import { Alert, Button, Checkbox, Form, Input, Radio, Typography, notification } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import HtmlContent from '../components/HtmlContent';
@@ -19,7 +19,7 @@ const ParticipantReplyEditor = () => {
     const navigate = useNavigate();
 
     const validateDate = (data) => {
-        const now = moment();
+        const now = dayjs();
 
         if (data.startTime && now.isBefore(data.startTime)) {
             setErrorMessage('The survey has not started yet.');

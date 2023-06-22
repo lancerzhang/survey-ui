@@ -1,5 +1,5 @@
 import { List, Pagination } from 'antd';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import HtmlContent from './HtmlContent';
 
@@ -42,7 +42,7 @@ const PublisherList = ({
                     >
                         <List.Item.Meta
                             title={item.title}
-                            description={moment(item.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
+                            description={dayjs(item.createdAt).local().format('YYYY-MM-DD HH:mm:ss')}
                         />
                         <HtmlContent>{item.description}</HtmlContent>
                     </List.Item>
