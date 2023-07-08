@@ -15,8 +15,11 @@ const ParticipantReplyEditor = () => {
     const [showForm, setShowForm] = useState(true);
     const [editForm, setEditForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [visibleQuestions, setVisibleQuestions] = useState([]);
+    const [initialQuestions, setInitialQuestions] = useState([]);
     const { id } = useParams();
     const navigate = useNavigate();
+
 
     const validateDate = (data) => {
         const now = dayjs();
@@ -64,6 +67,8 @@ const ParticipantReplyEditor = () => {
 
                 const surveyData = await surveyResponse.json();
                 setSurvey(surveyData);
+                setInitialQuestions([...surveyData.questions]);
+                setVisibleQuestions(surveyData.questions.map((_, index) => index));
 
                 if (surveyReplyResponse.status !== 404) {
                     const replyData = await surveyReplyResponse.json();
@@ -204,86 +209,108 @@ const ParticipantReplyEditor = () => {
             <Typography.Paragraph><HtmlContent>{survey.description}</HtmlContent></Typography.Paragraph>
             {showForm ? (
                 <Form onFinish={onFinish}>
-                    {survey.questions.map((question, questionIndex) => {
-                        const questionReply = surveyReply ? surveyReply.questionReplies.find((qr) => qr.questionId === question.id) : '';
-                        let ChoiceGroup;
-                        let ChoiceItem;
-                        let initValues;
-                        if (question.maxSelection === 1) {
-                            ChoiceGroup = Radio.Group
-                            ChoiceItem = Radio
-                            initValues = questionReply ? question.options.find(
-                                (option) =>
-                                    questionReply.optionReplies.find(
-                                        (or) => or.optionId === option.id && or.selected
-                                    )
-                            ).optionText
-                                : null
-                        } else {
-                            ChoiceGroup = Checkbox.Group
-                            ChoiceItem = Checkbox
-                            initValues = questionReply
-                                ? question.options
-                                    .filter((option) =>
+                    {survey.questions
+                        .filter((_, index) => visibleQuestions.includes(index))
+                        .map((question, questionIndex) => {
+                            const questionReply = surveyReply ? surveyReply.questionReplies.find((qr) => qr.questionId === question.id) : '';
+                            let ChoiceGroup;
+                            let ChoiceItem;
+                            let initValues;
+                            if (question.maxSelection === 1) {
+                                ChoiceGroup = Radio.Group
+                                ChoiceItem = Radio
+                                initValues = questionReply ? question.options.find(
+                                    (option) =>
                                         questionReply.optionReplies.find(
                                             (or) => or.optionId === option.id && or.selected
                                         )
-                                    )
-                                    .map((option) => option.optionText)
-                                : []
-                        }
-                        return (
-                            <React.Fragment key={questionIndex}>
-                                <Typography.Title level={4}>
-                                    Q{questionIndex + 1}. {question.questionText}
-                                </Typography.Title>
-                                {question.questionType === 'TEXT' && (
-                                    <Form.Item
-                                        name={`question_${questionIndex}`}
-                                        initialValue={questionReply ? questionReply.replyText : ''}
-                                        rules={[
-                                            { required: question.isMandatory, message: 'Please input an answer.' },
-                                        ]}
-                                    >
-                                        <Input placeholder="Type your answer here" disabled={!editForm} />
-                                    </Form.Item>
-                                )}
-                                {question.questionType === 'CHOICE' && (
-                                    <Form.Item
-                                        name={`question_${questionIndex}`}
-                                        initialValue={initValues}
-                                        rules={[
-                                            {
-                                                required: question.isMandatory,
-                                                message: 'Please select an option.'
-                                            },
-                                            {
-                                                validator: (_, value) => {
-                                                    // only for CheckBox
-                                                    if (question.maxSelection !== 1) {
-                                                        if (question.minSelection && value.length < question.maxSelection) {
-                                                            return Promise.reject(new Error(`Please select more than ${question.minSelection} options.`));
-                                                        } else if (question.maxSelection && value.length > question.maxSelection) {
-                                                            return Promise.reject(new Error(`Please select less than${question.maxSelection} options.`));
-                                                        }
-                                                    }
-                                                    return Promise.resolve();
+                                ).optionText
+                                    : null
+                            } else {
+                                ChoiceGroup = Checkbox.Group
+                                ChoiceItem = Checkbox
+                                initValues = questionReply
+                                    ? question.options
+                                        .filter((option) =>
+                                            questionReply.optionReplies.find(
+                                                (or) => or.optionId === option.id && or.selected
+                                            )
+                                        )
+                                        .map((option) => option.optionText)
+                                    : []
+                            }
+                            return (
+                                <React.Fragment key={questionIndex}>
+                                    <Typography.Title level={4}>
+                                        Q{questionIndex + 1}. {question.questionText}
+                                    </Typography.Title>
+                                    {question.questionType === 'TEXT' && (
+                                        <Form.Item
+                                            name={`question_${questionIndex}`}
+                                            initialValue={questionReply ? questionReply.replyText : ''}
+                                            rules={[
+                                                { required: question.isMandatory, message: 'Please input an answer.' },
+                                            ]}
+                                        >
+                                            <Input placeholder="Type your answer here" disabled={!editForm} />
+                                        </Form.Item>
+                                    )}
+                                    {question.questionType === 'CHOICE' && (
+                                        <Form.Item
+                                            name={`question_${questionIndex}`}
+                                            initialValue={initValues}
+                                            rules={[
+                                                {
+                                                    required: question.isMandatory,
+                                                    message: 'Please select an option.'
                                                 },
-                                            }
-                                        ]}
-                                    >
-                                        <ChoiceGroup disabled={!editForm}>
-                                            {question.options.map((option, optionIndex) => (
-                                                <ChoiceItem key={optionIndex} value={option.optionText}>
-                                                    {option.optionText}
-                                                </ChoiceItem>
-                                            ))}
-                                        </ChoiceGroup>
-                                    </Form.Item>
-                                )}
-                            </React.Fragment>
-                        );
-                    })}
+                                                {
+                                                    validator: (_, value) => {
+                                                        // only for CheckBox
+                                                        if (question.maxSelection !== 1) {
+                                                            if (question.minSelection && value.length < question.maxSelection) {
+                                                                return Promise.reject(new Error(`Please select more than ${question.minSelection} options.`));
+                                                            } else if (question.maxSelection && value.length > question.maxSelection) {
+                                                                return Promise.reject(new Error(`Please select less than${question.maxSelection} options.`));
+                                                            }
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                }
+                                            ]}
+                                        >
+                                            <ChoiceGroup disabled={!editForm}>
+                                                {question.options.map((option, optionIndex) => (
+                                                    <ChoiceItem
+                                                        key={optionIndex}
+                                                        value={option.optionText}
+                                                        onChange={(e) => {
+                                                            if (editForm && e.target.checked && question.maxSelection === 1 && option.nextQuestionIndex !== undefined) {
+                                                                let newVisibleQuestions;
+                                                                if (option.nextQuestionIndex === 9999) {
+                                                                    newVisibleQuestions = [...Array(questionIndex + 1).keys()];
+                                                                } else {
+                                                                    newVisibleQuestions = [
+                                                                        ...Array(questionIndex + 1).keys(),
+                                                                        ...initialQuestions
+                                                                            .map((_, index) => index)
+                                                                            .filter(index => index >= option.nextQuestionIndex),
+                                                                    ];
+                                                                }
+                                                                setVisibleQuestions(newVisibleQuestions);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {option.optionText}
+                                                    </ChoiceItem>
+
+                                                ))}
+                                            </ChoiceGroup>
+                                        </Form.Item>
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" disabled={!editForm}>

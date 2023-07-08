@@ -217,7 +217,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                                             />
                                                                         </Form.Item>
                                                                     </Col>
-                                                                    <Col span={4}>
+                                                                    {question.maxSelection === 1 && <Col span={4}>
                                                                         <Form.Item
                                                                             form={form}
                                                                             name={`option__${option.id}_nextQuestionIndex`}
@@ -244,7 +244,8 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                                             </Select>
                                                                         </Form.Item>
 
-                                                                    </Col>
+                                                                    </Col>}
+
                                                                     <Col span={4}>
                                                                         <Tooltip title="Remove Option">
                                                                             <Button
