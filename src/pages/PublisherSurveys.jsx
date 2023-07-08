@@ -41,7 +41,7 @@ const PublisherSurveys = () => {
 
   const handleShareClick = (e, surveyId) => {
     e.stopPropagation();
-    const shareUrl = `${uiDomain}/participant/reply-editor/${surveyId}`;
+    const shareUrl = `${uiDomain}#/participant/reply-editor/${surveyId}`;
     setSurveyUrl(shareUrl);
     setIsShareModalVisible(true);
   };

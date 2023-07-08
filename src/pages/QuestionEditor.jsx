@@ -1,8 +1,9 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Space, Switch, Tooltip } from "antd";
+import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Space, Switch, Tooltip } from "antd";
 import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { BASE_NUM_NEW_ID } from "../utils/surveyUtils";
+const { Option } = Select;
 
 const { TextArea } = Input;
 
@@ -24,7 +25,6 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
 
         setQuestions(items);
     }
-
 
     const handleAddPastedOptions = (questionIndex) => {
         const newOptions = pastedOptions.split('\n');
@@ -59,7 +59,6 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
         setSequenceNumber(sequenceNumber + 3);
     };
 
-
     const updateQuestion = (questionIndex, fieldName, newFieldValue) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
@@ -82,12 +81,11 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
         setSequenceNumber(sequenceNumber + 1);
     };
 
-
-    const updateOptions = (questionIndex, optionIndex, newOptionText) => {
+    const updateOption = (questionIndex, optionIndex, fieldName, newFieldValue) => {
         const newQuestions = [...questions];
         const updatedQuestion = { ...newQuestions[questionIndex] };
         const updatedOptions = [...updatedQuestion.options];
-        updatedOptions[optionIndex] = { ...updatedOptions[optionIndex], optionText: newOptionText };
+        updatedOptions[optionIndex] = { ...updatedOptions[optionIndex], [fieldName]: newFieldValue };
         updatedQuestion.options = updatedOptions;
         newQuestions[questionIndex] = updatedQuestion;
         setQuestions(newQuestions);
@@ -201,7 +199,7 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                             </Row>
                                                             {question.options.map((option, optionIndex) => (
                                                                 <Row>
-                                                                    <Col span={20}>
+                                                                    <Col span={16}>
                                                                         <Form.Item
                                                                             form={form}
                                                                             name={`option__${option.id}`}
@@ -214,10 +212,38 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                                                 autoSize={{ minRows: 1 }}
                                                                                 placeholder="Option text"
                                                                                 onChange={(e) =>
-                                                                                    updateOptions(questionIndex, optionIndex, e.target.value)
+                                                                                    updateOption(questionIndex, optionIndex, "optionText", e.target.value)
                                                                                 }
                                                                             />
                                                                         </Form.Item>
+                                                                    </Col>
+                                                                    <Col span={4}>
+                                                                        <Form.Item
+                                                                            form={form}
+                                                                            name={`option__${option.id}_nextQuestionIndex`}
+                                                                            initialValue={option.nextQuestionIndex}
+                                                                        >
+                                                                            <Select
+                                                                                placeholder="Select next question"
+                                                                                onChange={(value) =>
+                                                                                    updateOption(questionIndex, optionIndex, "nextQuestionIndex", value)
+                                                                                }
+                                                                            >
+                                                                                {questions.map((q, index) => {
+                                                                                    // Only allow selection of questions after the current one
+                                                                                    if (index > questionIndex) {
+                                                                                        return (
+                                                                                            <Option key={index} value={index}>
+                                                                                                {`Q${index + 1}. ${q.questionText}`}
+                                                                                            </Option>
+                                                                                        );
+                                                                                    }
+                                                                                    return null;
+                                                                                })}
+                                                                                <Option value={9999}>End of the survey</Option>
+                                                                            </Select>
+                                                                        </Form.Item>
+
                                                                     </Col>
                                                                     <Col span={4}>
                                                                         <Tooltip title="Remove Option">
@@ -227,7 +253,8 @@ const QuestionEditor = ({ form, questions, setQuestions }) => {
                                                                                 icon={<DeleteOutlined />}
                                                                                 danger
                                                                             />
-                                                                        </Tooltip></Col>
+                                                                        </Tooltip>
+                                                                    </Col>
                                                                 </Row>
                                                             ))}
                                                             <Form.Item
