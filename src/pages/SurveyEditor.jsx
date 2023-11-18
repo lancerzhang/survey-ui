@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Divider, Form, Input, InputNumber, Row, Space, Switch, notification } from 'antd';
+import { Button, Col, DatePicker, Divider, Form, Input, InputNumber, List, Row, Space, Switch, notification } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useFetchUsers from '../useFetchUsers';
 import { removeIdsFromSurvey, removeNewIdsFromSurvey } from '../utils/surveyUtils';
 import QuestionEditor from './QuestionEditor';
+import './SurveyEditor.css';
 
 const { TextArea } = Input;
 const serverDomain = process.env.REACT_APP_SERVER_DOMAIN;
@@ -20,6 +21,8 @@ const SurveyEditor = () => {
     const [form] = Form.useForm();
     const queryParams = new URLSearchParams(location.search);
     const templateId = queryParams.get('templateId');
+    const [surveyAccess, setSurveyAccess] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
         const fetchSurvey = async () => {
@@ -32,6 +35,11 @@ const SurveyEditor = () => {
                 // Remove all id fields in the survey, questions, and options
                 modifiedData = removeIdsFromSurvey(data);
                 modifiedData.isTemplate = false;
+            } else {
+                const response = await fetch(`${serverDomain}/survey-access/${id}`);
+                const data = await response.json();
+                setSurveyAccess(data);
+
             }
             setSurvey(modifiedData);
         };
@@ -43,7 +51,6 @@ const SurveyEditor = () => {
             fetchSurvey();
         }
     }, [id, templateId]);
-
 
     const onFinish = async (values) => {
         const newSurvey = { ...survey, ...values };
@@ -166,6 +173,30 @@ const SurveyEditor = () => {
         }
     };
 
+    const addUser = (user) => {
+        if (!surveyAccess.some(access => access.user.id === user.id)) {
+            setSurveyAccess([...surveyAccess, { user }]);
+        }
+        // Optionally clear the search results and search input after adding a user
+        setSearchResults([]);
+    };
+
+    const deleteSurveyAccess = (user) => {
+        setSurveyAccess(surveyAccess.filter((u) => u !== user));
+    };
+
+    const handleSearch = async (searchString) => {
+        const response = await fetch(`${serverDomain}/users/search?searchString=${searchString}`);
+        const data = await response.json();
+        setSearchResults(data);
+    };
+
+    const SearchResult = ({ result }) => (
+        <div className="searchResult" onClick={() => addUser(result)}>
+            {result.employeeId}, {result.displayName}
+        </div>
+    );
+
     return (
         <div>
             {survey && (
@@ -239,6 +270,26 @@ const SurveyEditor = () => {
                         questions={survey.questions}
                         setQuestions={setQuestions}
                     />
+                    <Divider />
+                    <Form.Item label="Share this survey to:">
+                        <Input.Search
+                            placeholder="Enter display name or employee ID to search"
+                            onSearch={handleSearch}
+                        />
+                        {searchResults.map(result => (
+                            <SearchResult key={result.id} result={result} />
+                        ))}
+                        <List
+                            className="sharedUserList"
+                            dataSource={surveyAccess}
+                            locale={{ emptyText: ' ' }} // Setting emptyText to a space
+                            renderItem={sa => (
+                                <List.Item actions={[<a onClick={() => deleteSurveyAccess(sa)}>Delete</a>]}>
+                                    {sa.user.employeeId}, {sa.user.displayName}
+                                </List.Item>
+                            )}
+                        />
+                    </Form.Item>
                     <Divider />
                     <Row justify="center">
                         <Col>
