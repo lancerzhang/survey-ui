@@ -292,26 +292,28 @@ const SurveyEditor = () => {
                         questions={survey.questions}
                         setQuestions={setQuestions}
                     />
-                    <Divider />
-                    <Form.Item label="Share this survey to:">
-                        <Input.Search
-                            placeholder="Enter display name or employee ID to search"
-                            onSearch={handleSearch}
-                        />
-                        {searchResults.map(result => (
-                            <SearchResult key={result.id} result={result} />
-                        ))}
-                        <List
-                            className="sharedUserList"
-                            dataSource={surveyAccesses}
-                            locale={{ emptyText: ' ' }} // Setting emptyText to a space
-                            renderItem={surveyAccess => (
-                                <List.Item actions={[<a onClick={() => deleteSurveyAccess(surveyAccess)}>Delete</a>]}>
-                                    {surveyAccess.user.employeeId}, {surveyAccess.user.displayName}
-                                </List.Item>
-                            )}
-                        />
-                    </Form.Item>
+                    {user.id === survey.userId ? <React.Fragment>
+                        <Divider />
+                        <Form.Item label="Share this survey to:">
+                            <Input.Search
+                                placeholder="Enter display name or employee ID to search"
+                                onSearch={handleSearch}
+                            />
+                            {searchResults.map(result => (
+                                <SearchResult key={result.id} result={result} />
+                            ))}
+                            <List
+                                className="sharedUserList"
+                                dataSource={surveyAccesses}
+                                locale={{ emptyText: ' ' }} // Setting emptyText to a space
+                                renderItem={surveyAccess => (
+                                    <List.Item actions={[<a onClick={() => deleteSurveyAccess(surveyAccess)}>Delete</a>]}>
+                                        {surveyAccess.user.employeeId}, {surveyAccess.user.displayName}
+                                    </List.Item>
+                                )}
+                            />
+                        </Form.Item>
+                    </React.Fragment> : ''}
                     <Divider />
                     <Row justify="center">
                         <Col>
