@@ -21,7 +21,7 @@ const SurveyEditor = () => {
     const [form] = Form.useForm();
     const queryParams = new URLSearchParams(location.search);
     const templateId = queryParams.get('templateId');
-    const [surveyAccess, setSurveyAccess] = useState([]);
+    const [surveyAccesses, setSurveyAccesses] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const SurveyEditor = () => {
             } else {
                 const response = await fetch(`${serverDomain}/survey-access/${id}`);
                 const data = await response.json();
-                setSurveyAccess(data);
+                setSurveyAccesses(data);
 
             }
             setSurvey(modifiedData);
@@ -173,16 +173,38 @@ const SurveyEditor = () => {
         }
     };
 
-    const addUser = (user) => {
-        if (!surveyAccess.some(access => access.user.id === user.id)) {
-            setSurveyAccess([...surveyAccess, { user }]);
+    const addUser = async (user) => {
+        if (!surveyAccesses.some(access => access.user.id === user.id)) {
+            const requestBody = {
+                surveyId: id,
+                user,
+            };
+
+            const response = await fetch(`${serverDomain}/survey-access`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (response.ok) {
+                const newAccess = await response.json();
+                setSurveyAccesses([...surveyAccesses, newAccess]);
+            }
         }
         // Optionally clear the search results and search input after adding a user
         setSearchResults([]);
     };
 
-    const deleteSurveyAccess = (user) => {
-        setSurveyAccess(surveyAccess.filter((u) => u !== user));
+    const deleteSurveyAccess = async (surveyAccess) => {
+        const response = await fetch(`${serverDomain}/survey-access/${surveyAccess.id}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            setSurveyAccesses(surveyAccesses.filter((u) => u !== surveyAccess));
+        }
     };
 
     const handleSearch = async (searchString) => {
@@ -281,11 +303,11 @@ const SurveyEditor = () => {
                         ))}
                         <List
                             className="sharedUserList"
-                            dataSource={surveyAccess}
+                            dataSource={surveyAccesses}
                             locale={{ emptyText: ' ' }} // Setting emptyText to a space
-                            renderItem={sa => (
-                                <List.Item actions={[<a onClick={() => deleteSurveyAccess(sa)}>Delete</a>]}>
-                                    {sa.user.employeeId}, {sa.user.displayName}
+                            renderItem={surveyAccess => (
+                                <List.Item actions={[<a onClick={() => deleteSurveyAccess(surveyAccess)}>Delete</a>]}>
+                                    {surveyAccess.user.employeeId}, {surveyAccess.user.displayName}
                                 </List.Item>
                             )}
                         />
